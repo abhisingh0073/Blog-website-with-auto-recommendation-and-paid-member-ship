@@ -1,1 +1,66 @@
 @import "tailwindcss";
+
+/* ================================
+   TipTap Placeholder
+================================ */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #94a3b8; /* slate-400 */
+  pointer-events: none;
+  height: 0;
+}
+
+/* ================================
+   Inline Code (not code blocks)
+================================ */
+.prose :not(pre) > code {
+  color: #1a1a1a;
+  background-color: #f1f5f9; /* slate-100 */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-family: "Fira Code", monospace;
+}
+
+.prose pre {
+  background-color: #2d2d2d;
+  color: #cccccc;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  border: 1px solid #444;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-family: "Fira Code", monospace;
+}
+
+.hljs-keyword   { color: #6699cc; }
+.hljs-variable  { color: #f2777a; }
+.hljs-operator  { color: #66cccc; }
+.hljs-comment   { color: #99cc99; font-style: italic; }
+.hljs-number    { color: #f99157; }
+
+
+.prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 1.5em 0 0.75em;
+}
+
+.prose h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 1.25em 0 0.6em;
+}
+
+.prose h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
