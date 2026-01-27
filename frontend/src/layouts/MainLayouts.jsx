@@ -10,8 +10,8 @@ export default function MainLayout({ children }) {
         <Sidebar />
 
         {/* MAIN CONTENT */}
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
-          <div className="
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-50 ">
+          <div className=" px-6
             grid grid-cols-1 
             sm:grid-cols-2 
             md:grid-cols-3 

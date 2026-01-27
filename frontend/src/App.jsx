@@ -33,12 +33,14 @@ import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import { Route, Routes } from "react-router-dom";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/post" element={<Post />}/>
+      <Route path="/id" element={<Profile/>}/>
     </Routes>
   );
 }
