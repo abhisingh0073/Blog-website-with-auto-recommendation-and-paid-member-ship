@@ -5,12 +5,15 @@ import LoginModal from "./LoginModal";
 import { useState } from "react";
 import SignupModal from "./SignupModal";
 import CreatePostModal from "./CreatPostModal";
+import ProfileModal from "./modal/ProfileModal";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
 
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const openLogin = () => {
     setShowLogin(true);
@@ -26,12 +29,13 @@ export default function Navbar() {
   return (<>
   <header className="h-14 w-full border-b bg-white flex justify-between items-center px-10">
       
-      {/* LEFT: Logo */}
-      <div className="font-bold text-xl text-blue-600 cursor-pointer">
-        MindPost
-      </div>
+      
+      <Link to="/" className="font-bold text-xl text-blue-600 cursor-pointer">
+       MindPost
+      </Link>
 
-      {/* MIDDLE: Search */}
+
+      {/* search */}
         <div className="flex items-center gap-2 rounded-full border border-slate-300  focus-within:ring-0 focus-within:ring-blue-500 focus-within:border-blue-500 transition">
           <input
             type="text"
@@ -49,7 +53,7 @@ export default function Navbar() {
           </div>
 
 
-      {/* RIGHT: Actions */}
+    
       <div className="flex items-center gap-5">
         <button className="px-4 py-1.5 flex gap-1 items-center border border-slate-300 rounded-full hover:bg-gray-100"
             onClick={() => setShowCreate(true)}
@@ -67,7 +71,8 @@ export default function Navbar() {
              onClick={() => {setShowSignup(true)}}
              className="px-4 py-1.5 flex gap-1 items-center cursor-pointer border border-slate-300 rounded-full transition duration-300 hover:bg-gray-100 hover:border-blue-600"><FontAwesomeIcon icon={faUserPlus} />SignUp</button>
 
-        <img src="https://cdn-icons-png.flaticon.com/512/709/709699.png" alt="" className="w-8 h-8 border border-slate-950 rounded-full cursor-pointer" />
+             
+        <img src="https://cdn-icons-png.flaticon.com/512/709/709699.png" alt="" className="w-8 h-8 border border-slate-950 rounded-full cursor-pointer" onClick={() => setShowProfileModal(!showProfileModal)} />
       </div>
 
     </header>
@@ -88,6 +93,11 @@ export default function Navbar() {
     <CreatePostModal
       isOpen={showCreate}
       onClose={() => setShowCreate(false)}
+    />
+
+    <ProfileModal
+    isOpen={showProfileModal}
+    onClose={() => setShowProfileModal(false)}
     />
   </>
     

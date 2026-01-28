@@ -28,22 +28,23 @@ import axios from "axios";
 
 // export default App;
 
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
-import { Route, Routes } from "react-router-dom";
 import Profile from "./pages/Profile";
+import AppLayout from "./layouts/AppLayOut";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/post" element={<Post />}/>
-      <Route path="/id" element={<Profile/>}/>
+      {/* Layout Route */}
+        <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/post/" element={<Post />} />
+        <Route path="/profile/:id" element={<Profile />} />
+      </Route>
     </Routes>
   );
 }
 
 export default App;
-

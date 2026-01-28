@@ -70,9 +70,9 @@ const post = {
 
 const PostContent = () => {
   return (
-    <article className="bg-white p-8 max-w-5xl mx-auto min-h-screen border border-slate-200 shadow-sm mt-10 rounded-xl">
+    <article className="bg-white p-8 max-w-5xl mx-auto min-h-screen border border-slate-200 shadow-sm  rounded-xl">
       
-      {/* Article Header */}
+      
       <h1 className="mb-4 text-4xl font-bold text-slate-900 tracking-tight leading-tight">
         How to learn React in 40 days
       </h1>

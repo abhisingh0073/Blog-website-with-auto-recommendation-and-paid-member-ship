@@ -1,11 +1,13 @@
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
-import PostCardMenuPortal from "./PostCardMenuPortal";
+import PostCardMenuPortal from "./UserPostCardMenuPortal";
+import EditPostModal from "./EditPostModal";
 
-export default function PostCard({ post }) {
+export default function UserPostCard({ post }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const buttonRef = useRef(null);
 
   const title = post?.title || "Professional UI Design with React & Tailwind";
@@ -27,7 +29,7 @@ export default function PostCard({ post }) {
   top: wouldOverflow
     ? rect.top - menuHeight - margin
     : rect.bottom + margin,
-  left: rect.right + 4, // 👈 tiny offset feels natural
+  left: rect.right + 4, 
 });
 
 
@@ -96,8 +98,20 @@ export default function PostCard({ post }) {
       </div>
 
       {menuOpen && (
-        <PostCardMenuPortal position={menuPos} />
+        <PostCardMenuPortal 
+          position={menuPos}
+          onEdit= {() => {
+            setEditModalOpen(true)
+            setMenuOpen(false);
+          }}
+          />
       )}
+
+      <EditPostModal
+       isOpen={editModalOpen}
+       onClose={() => setEditModalOpen(false)}
+       initialData={post}
+      />
 
     </>
   );
