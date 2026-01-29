@@ -28,12 +28,12 @@ async function handleSignUp(req, res) {
        res.cookie("mindpost", token, {
         httpOnly: true,
         secure: false,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 1000,
        })
 
-       res.status(201).json({ message: "Signup successful"});
-       return res.redirect("/");
+       return res.status(201).json({ message: "Signup Successful"});
+       
     } catch(error){
         return res.status(500).json({ message: error.message });
     }
@@ -52,8 +52,9 @@ async function handleLogin(req, res){
        return res.cookie("mindpost", token, {
        httpOnly: true,
        secure: false,
-       sameSite: "strict",
-       maxAge: 7 * 24 * 60 * 1000,
+       sameSite: "lax",
+       maxAge: 7 * 24 * 60 * 60 * 1000
+
        }).status(201).json({message : "Login Successful" });
 
     } catch(error){
@@ -71,10 +72,10 @@ async function handleLogOut(req, res){
   res.clearCookie("mindpost", {
     httpOnly: true,
     secure: false,      // true in production (HTTPS)
-    sameSite: "strict",
+    sameSite: "lax",
   });
 
-  return res.redirect("/");
+  return res.status(200).json({message: "Logged out successfully"})
 }
 
 

@@ -10,10 +10,13 @@ import {
 import { useState } from "react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 
 
 export default function Sidebar() {
+
+  
 
   const tabs = [
     { label: "Home", icon: faHouse, to:"/" },

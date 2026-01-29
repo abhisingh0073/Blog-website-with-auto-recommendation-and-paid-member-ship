@@ -11,9 +11,9 @@ export function checkForAuthenticaionCookies(mindpost){
         try{
             const userPayload = validateToken(tokenCookieValue);
             req.user = userPayload;
-            // console.log(userPayload);
+            
         } catch(error){
-
+            req.user = null;
         }
 
         return next();

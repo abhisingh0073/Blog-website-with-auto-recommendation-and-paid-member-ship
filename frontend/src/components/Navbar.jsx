@@ -7,8 +7,11 @@ import SignupModal from "./SignupModal";
 import CreatePostModal from "./CreatPostModal";
 import ProfileModal from "./modal/ProfileModal";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+
+  const { user } = useAuth();
 
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
@@ -55,14 +58,10 @@ export default function Navbar() {
 
     
       <div className="flex items-center gap-5">
-        <button className="px-4 py-1.5 flex gap-1 items-center border border-slate-300 rounded-full hover:bg-gray-100"
-            onClick={() => setShowCreate(true)}
-        >
-          <FontAwesomeIcon icon={faPlus}/>Create
-        </button>
 
-        <button className="text-xl cursor-pointer"><FontAwesomeIcon icon={faBell} /></button>
 
+
+        {!user ? (<>
         <button 
              onClick={() => setShowLogin(true)}
              className="px-4 py-1.5 flex gap-1 items-center cursor-pointer border border-slate-300 rounded-full transition duration-300 hover:bg-gray-100 hover:border-blue-600 "><FontAwesomeIcon icon={faArrowRightToBracket} />Login</button>
@@ -70,9 +69,19 @@ export default function Navbar() {
         <button 
              onClick={() => {setShowSignup(true)}}
              className="px-4 py-1.5 flex gap-1 items-center cursor-pointer border border-slate-300 rounded-full transition duration-300 hover:bg-gray-100 hover:border-blue-600"><FontAwesomeIcon icon={faUserPlus} />SignUp</button>
-
+        
+        </>) : (<>
+        <button className="px-4 py-1.5 flex gap-1 items-center border border-slate-300 rounded-full hover:bg-gray-100"
+            onClick={() => setShowCreate(true)}
+        >
+          <FontAwesomeIcon icon={faPlus}/>Create
+        </button>        
+          <button className="text-xl cursor-pointer"><FontAwesomeIcon icon={faBell} /></button>
+         <img src="https://cdn-icons-png.flaticon.com/512/709/709699.png" alt="" className="w-8 h-8 border border-slate-950 rounded-full cursor-pointer" onClick={() => setShowProfileModal(!showProfileModal)} />
+        </>
+      )}
+ 
              
-        <img src="https://cdn-icons-png.flaticon.com/512/709/709699.png" alt="" className="w-8 h-8 border border-slate-950 rounded-full cursor-pointer" onClick={() => setShowProfileModal(!showProfileModal)} />
       </div>
 
     </header>
@@ -98,6 +107,7 @@ export default function Navbar() {
     <ProfileModal
     isOpen={showProfileModal}
     onClose={() => setShowProfileModal(false)}
+    user={user}
     />
   </>
     

@@ -1,17 +1,72 @@
 import { faEnvelope, faEye, faEyeSlash, faUserCircle } from "@fortawesome/free-regular-svg-icons";
 import { faLock, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useToast } from "../context/ToastContext.jsx";
 
 import { useState } from "react";
+import api from "../api/api.js";
 
 
 const SignupModal = ({isOpen, onClose, onSwitch}) => {
 
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    
+    const toast = useToast();
+
+    const [form, setForm] = useState({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+
 
     if(!isOpen){
         return null;
     }
+
+
+    const handleChange = (e) => {
+      setForm({...form, [e.target.name]: e.target.value})
+    };
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      if(form.password==="") {
+        alert("Passwords cannot be empty");
+        return;
+      }
+      if(form.password !== form.confirmPassword){
+        alert("Password do not match");
+        return;
+      }
+
+      setLoading(true);
+
+      try{
+        const res = await api.post("/user/signup", {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        });
+        
+
+        onClose();
+        toast.success(res.data.message);
+        setLoading(false);
+        
+        
+      } catch(err) {
+        toast.error(err.response?.data?.message || "Signup failed");
+        setLoading(false);
+      }
+
+     
+    }
+
 
     return(
         <div
@@ -32,14 +87,17 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
                     <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
                 </div>
 
-                <form action="" className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5" onClick={(e) => e.stopPropagation()}>
                     <div className="relative">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                           <FontAwesomeIcon icon={faEnvelope} />
                         </span>
                         <input 
-                          type="email" 
-                          placeholder="Email Address" 
+                          name="name"
+                          type="text"
+                          value={form.name} 
+                          onChange={handleChange}
+                          placeholder="Name" 
                           className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
                         />
                     </div>
@@ -49,22 +107,16 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
                           <FontAwesomeIcon icon={faEnvelope} />
                         </span>
                         <input 
+                          name="email"
                           type="email" 
                           placeholder="Email Address" 
+                          value={form.email}
+                          onChange={handleChange}
                           className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
                         />
                     </div>
 
-                    <div className="relative">
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                          <FontAwesomeIcon icon={faEnvelope} />
-                        </span>
-                        <input 
-                          type="email" 
-                          placeholder="Email Address" 
-                          className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-                        />
-                    </div>
+                    
 
 
                     {/* password */}
@@ -74,8 +126,11 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
                       <FontAwesomeIcon icon={faLock} />
                     </span>
                     <input 
+                      name="password"
                       type={showPassword ? "text" : "password"} 
                       placeholder="Password" 
+                      value={form.password}
+                      onChange={handleChange}
                       className="w-full  bg-transparent outline-none transition-all"
                     />
                     <button 
@@ -91,8 +146,11 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
                       <FontAwesomeIcon icon={faLock} />
                     </span>
                     <input 
+                      name="confirmPassword"
                       type={showPassword ? "text" : "password"} 
                       placeholder="Confirm Password" 
+                      value={form.confirmPassword}
+                      onChange={handleChange}
                       className="w-full  bg-transparent outline-none transition-all"
                     />
                     <button 
@@ -105,7 +163,7 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
 
                   <button type="submit"
                           className="w-full py-3 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg"
-                  >Creat Account</button>
+                  >{loading ? "Creating..." : "Create Account" }</button>
 
                 </form>
 
@@ -115,7 +173,7 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
 
                 <div className="mt-3 text-center border-t pt-3">
                     <p className="text-gray-600">
-                    Create Account 
+                    Already have an account? 
                     <button className='ml-1 font-bold text-indigo-600 text-center items-center cursor-pointer hover:text-indigo-800'
                     onClick={onSwitch}
                    >Login</button>

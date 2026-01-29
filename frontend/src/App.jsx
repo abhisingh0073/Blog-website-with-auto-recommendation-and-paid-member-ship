@@ -33,8 +33,15 @@ import Home from "./pages/Home";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
 import AppLayout from "./layouts/AppLayOut";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+
+  const { checkingAuth } = useAuth();
+  
+  if(checkingAuth){
+    return <div>Loading....</div>
+  }
   return (
     <Routes>
       {/* Layout Route */}

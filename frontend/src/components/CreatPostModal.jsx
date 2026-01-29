@@ -2,14 +2,29 @@ import { faEye, faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import Editor from "./Editor";
+import { createPost } from "../api/postApi";
+import { useToast } from "../context/ToastContext";
+import ButtonSpinner from "./ui/ButtonSpinner";
 
 
 export default function CreatePostModal({ isOpen, onClose }) {
     if (!isOpen) return null;
 
+    const[loading, setLoading] = useState(false);
+
+    const toast = useToast();
+
     const imageRef = useRef(null);
     const [coverImage, setCoverImage] = useState();
-    const [content, setContent] = useState("");
+    const [form, setForm] = useState({
+      title: "",
+      content: "",
+      tags: "",
+      status: "public",
+      category: "Select",
+      excerpt: "",
+      isMembersOnly: false,
+    })
 
     const handleSelect = (e) => {
         const file = e.target.files[0];
@@ -25,19 +40,63 @@ export default function CreatePostModal({ isOpen, onClose }) {
     }
 
 
+    const handleSubmit = async(e)=>{
+      e.preventDefault();
+
+      if(!form.title || !form.content){
+        alert("Title and content are required");
+        return;
+      }
+
+      setLoading(true);
+
+      try{
+        const res = await createPost({
+          postTitle: form.title,
+          postContent: form.content,
+          tags:form.tags,
+          category: form.category,
+          status: form.status,
+          excerpt: form.excerpt,
+          isMembersOnly: form.isMembersOnly,
+          coverImage,
+        });
+
+        toast.success(res.data.message);
+        setLoading(false);
+        onClose();
+
+      } catch(error){
+        toast.error(error.response.data.message || "Something went wrong")
+        setLoading(false);
+      }
+    }
+
+
+    const handleChange = (e) => {
+      setForm({...form , [e.target.name]:e.target.value});
+    }
+
+
   return (
     <div className="fixed flex inset-0 z-50 w-full bg-slate-100">
 
-        {/* section 1 */}
+      <form action="" onSubmit={handleSubmit}  className="flex w-full h-full">
         <div className="m-3 w-full flex flex-col items-center">
             <input type="text" 
+              name="title"
+              value={form.title}
               placeholder="Title"
+              onChange={handleChange}
               className="w-full p-2 pb-1 text-xl outline-none border border-gray-300 bg-white placeholder-gray-200" />
             <div className="mt-3 w-[60rem] flex-1 ">
 
                 {/* Editor */}
                 <div className="flex-1 h-screen rounded-lg">
-                  <Editor/>  
+                  <Editor
+                   value={form.content}
+                   onChange={(html) => setForm({...form, content: html})}
+                  />  
                 </div>
                  
 
@@ -56,7 +115,9 @@ export default function CreatePostModal({ isOpen, onClose }) {
                 Preview
               </button>
   
-              <select 
+              <select
+                value={form.status}
+                onChange={handleChange} 
                 className="px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 font-medium outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all duration-200 cursor-pointer shadow-sm hover:border-slate-400"
               >
                 <option value="public">Public</option>
@@ -105,7 +166,9 @@ export default function CreatePostModal({ isOpen, onClose }) {
             {/* tags */}
             <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
                 <h3>Tags</h3>
-                <textarea name="" id=""
+                <textarea name="tags" id=""
+                value={form.tags}
+                onChange={handleChange}
                 placeholder="Add comma(,) between tags"
                 className="outline-none w-full h-[150px] border border-slate-300 resize-none p-1 rounded-lg"
                 />
@@ -114,27 +177,63 @@ export default function CreatePostModal({ isOpen, onClose }) {
             {/* category */}
             <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
                 <h3>Select Category</h3>
-                <select name="" id="" className="border rounded-lg border-slate-400 p-1 outline-none">
+                <select name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className="border rounded-lg border-slate-400 p-1 outline-none">
                     <option value="">Select</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
+                    <option value="tech">Tech</option>
+                    <option value="programming">Programming</option>
+                    <option value="design">Design</option>
+                    <option value="lifestyle">Lifestyle</option>
                 </select>
             </div>
+
+            <div className="flex flex-row gap-2 m-3 pt-2 border-t border-slate-300">
+              <label className="font-medium">For Membersonly</label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isMembersOnly"
+                    checked={form.isMembersOnly === true}
+                    onChange={() =>
+                      setForm({ ...form, isMembersOnly: true })
+                    }
+                  />
+                  Yes
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isMembersOnly"
+                    checked={form.isMembersOnly === false}
+                    onChange={() =>
+                      setForm({ ...form, isMembersOnly: false })
+                    }
+                  />
+                  No
+                </label>
+            </div>              
+
             
             {/* submit and cancel button */}
             <div className="flex gap-3 justify-end border-t border-slate-300 m-3 pt-3">
                 <button 
+                type="button"
                 onClick={onClose}
                 className="py-2 px-3 border border-slate-300 rounded-lg cursor-pointer font-medium hover:bg-slate-300">Cancel</button>
-                <button className="py-2 px-3 border bg-indigo-600 rounded-lg text-white cursor pointer hover:bg-indigo-700 font-medium">Submit</button>
+                <button 
+                type="submit"
+                className={`py-2 px-3 border bg-indigo-600 rounded-lg text-white cursor pointer hover:bg-indigo-700 font-medium${loading&& "cursor-not-allowed"} `}>{loading? (<ButtonSpinner/>) : "Submit"}</button>
             </div>
            </div>
         </div>
+
+      </form>
+        {/* section 1 */}
+
     </div>
   );
 }

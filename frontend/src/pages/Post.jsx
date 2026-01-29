@@ -12,10 +12,10 @@ import PostRightSideBar from "../components/post/PostRightSideBar";
 
 export default function Post() {
   return (
-    <div className="flex gap-6 max-w-7xl mx-auto">
+    <div className="flex gap-6 max-w-8xl mx-auto">
       
       
-      <main className="flex-1 rounded-xl p-6">
+      <main className="flex-1 rounded-xl p-6 mx-9">
         <PostContent />
       </main>
 

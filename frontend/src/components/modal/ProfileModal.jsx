@@ -1,8 +1,26 @@
 import { faMoon, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useToast } from "../../context/ToastContext";
+import api from "../../api/api";
 
 export default function ProfileModal({ isOpen, onClose, user }) {
   if (!isOpen) return null;
+
+  const toast = useToast();
+
+
+  const handleLogout = async () => {
+    try{
+      const res = await api.get("/user/logout");
+      onClose();
+      toast.success(res.data.message);
+      window.location.href = "/";
+    } catch(error){
+      toast.error(error.response.data.message || "Logout Failed");
+    }
+  }
+
+
 
   return (
     <div className="fixed inset-0 z-[1000] bg-transparent" onClick={onClose}>
@@ -14,19 +32,19 @@ export default function ProfileModal({ isOpen, onClose, user }) {
         
         <div className="flex items-center gap-3 p-3 mb-1">
           <img 
-            src={user?.image || "https://cdn-icons-png.flaticon.com/512/709/709699.png"} 
+            src={user?.avatar || "https://cdn-icons-png.flaticon.com/512/709/709699.png"} 
             alt="Profile"
             className="w-10 h-10 rounded-full border border-slate-600 object-cover"
           />
           <div className="flex flex-col">
-            <h3 className="font-bold text-sm leading-tight">{user?.name || "Abhishek Kumar Singh"}</h3>
+            <h3 className="font-bold text-sm leading-tight">{user?.name || "User" }</h3>
             <span className="text-xs text-slate-400">@abhishek_dev</span>
           </div>
         </div>
 
         <div className="border-b border-slate-700 my-1 mx-2" />
 
-        {/* Menu Items */}
+        
         <div className="flex flex-col gap-1">
           <MenuButton icon={faUser} label="Your Profile" onClick={onClose} />
           <MenuButton icon={faMoon} label="Dark Mode" onClick={() => {}} />
@@ -37,7 +55,7 @@ export default function ProfileModal({ isOpen, onClose, user }) {
             icon={faSignOutAlt} 
             label="Sign Out" 
             css="text-red-400 hover:bg-red-500/10" 
-            onClick={() => console.log("Sign Out")} 
+            onClick={handleLogout} 
           />
         </div>
       </div>

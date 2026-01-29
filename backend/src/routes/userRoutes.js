@@ -11,6 +11,9 @@ const router = express.Router();
 router.post("/signup", handleSignUp);
 router.post("/login", handleLogin);
 router.get("/logout", handleLogOut);
+router.get("/me", authMiddleware, (req, res) => {
+    res.json({user: req.user});
+});
 
 
 router.post("/:userIdToFollow", authMiddleware, toggleFollow);
