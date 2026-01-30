@@ -1,9 +1,31 @@
 import { faPlus, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { updateProfile } from "../../../api/userApi";
+import { useToast } from "../../../context/ToastContext";
 
 export default function EditProfileModal({ isOpen, onClose, initialData, onSave }) {
-  const [formData, setFormData] = useState(initialData);
+  const toast = useToast();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    bio: "",
+    socials: [],
+  });
+
+
+
+    useEffect(() => {
+    if (initialData && isOpen) {
+      setFormData({
+        name: initialData.name || "",
+        bio: initialData.bio || "",
+        socials: initialData.socials || [],
+      });
+    }
+  }, [initialData, isOpen]);
+
+
 
   if (!isOpen) return null;
 
@@ -25,15 +47,31 @@ export default function EditProfileModal({ isOpen, onClose, initialData, onSave 
     setFormData({ ...formData, socials: newSocials });
   };
 
+
+const saveProfile = async () => {
+    try {
+        const payload = new FormData();
+        payload.append("name", formData.name); // Using your state
+        payload.append("bio", formData.bio);
+        payload.append("socials", JSON.stringify(formData.socials)); // Stringify for backend
+
+        const res = await updateProfile(payload); 
+        
+        onSave(res.data.user);
+        onClose();
+        toast.success(res.data.message || "Profile updated");
+    } catch (error) {
+        toast.error("Update failed");
+    }
+};
+
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal Card */}
       <div className="relative w-full max-w-2xl bg-[#212121] text-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <h2 className="text-xl font-bold">Edit Profile</h2>
           <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition">
@@ -41,14 +79,14 @@ export default function EditProfileModal({ isOpen, onClose, initialData, onSave 
           </button>
         </div>
 
-        {/* Form Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           
-          {/* Name Section */}
+
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-2">Display Name</label>
             <input 
               type="text"
+              name="name"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
@@ -61,6 +99,7 @@ export default function EditProfileModal({ isOpen, onClose, initialData, onSave 
             <label className="block text-sm font-medium text-slate-400 mb-2">Bio / About</label>
             <textarea 
               rows={4}
+              name="bio"
               value={formData.bio}
               onChange={(e) => setFormData({...formData, bio: e.target.value})}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition resize-none"
@@ -113,7 +152,7 @@ export default function EditProfileModal({ isOpen, onClose, initialData, onSave 
             Cancel
           </button>
           <button 
-            onClick={() => onSave(formData)}
+            onClick={saveProfile}
             className="px-8 py-2.5 bg-white text-black rounded-xl font-bold hover:bg-slate-200 transition"
           >
             Save Changes

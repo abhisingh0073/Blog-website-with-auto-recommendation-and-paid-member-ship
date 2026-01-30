@@ -25,10 +25,28 @@ const userSchema = new Schema({
         default: "default.png",
     },
 
+    coverImage: {
+        type: String,
+        default: "", 
+    },
+
     bio: {
         type: String,
         maxLength: 200,
     },
+
+    socials: [
+        {
+            platform: { 
+                type: String, 
+                trim: true 
+            },
+            url: { 
+                type: String, 
+                trim: true 
+            }
+        }
+    ],
 
 
 

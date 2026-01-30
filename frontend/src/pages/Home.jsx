@@ -1,6 +1,18 @@
+import recommendationPost from "../api/postApi";
 import PostCard from "../components/PostCard";
 
+
 export default function Home() {
+  const {posts, loading, error} = recommendationPost();
+
+  if(loading){
+    return <p className="text-center mt-10">Loading feed...</p>
+  }
+
+   if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
+
   return (
     <div
       className="
@@ -11,8 +23,8 @@ export default function Home() {
         gap-x-4 gap-y-8
       "
     >
-      {Array.from({ length: 12 }).map((_, i) => (
-        <PostCard key={i} />
+      {posts.map((post) => (
+        <PostCard key={post._id} post={post}/>
       ))}
     </div>
   );

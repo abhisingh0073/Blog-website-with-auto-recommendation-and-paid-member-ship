@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import{ matchPasswordAndGenerateToken, createTokenForUser} from "../services/authantication.js";
+import PostModel from "../models/PostModel.js";
 
 async function handleSignUp(req, res) {
     try{
@@ -79,4 +80,43 @@ async function handleLogOut(req, res){
 }
 
 
-export default { handleSignUp, handleLogin, handleLogOut };
+
+
+async function userProfile(req, res){
+
+    const postSelection = "coverImage title author views publishedAt";
+    // const user = req.user;
+
+    const user = await User.findById(req.user._id).select("-password");
+    const posts = await PostModel.find({author: req.user._id})
+                .select(postSelection)
+                .sort({createdAt: -1});
+    
+    return res.status(200).json({user, posts});
+}
+
+
+async function updateProfile(req, res){
+    try{
+        const update = {};
+
+        if(req.body.name) update.name = req.body.name;
+        if(req.body.bio) update.bio = req.body.bio;
+
+        if(req.body.socials){
+            update.socials = typeof req.body.socials === 'string' ? JSON.parse(req.body.socials):req.body.socials;
+        }
+
+        if(req.files?.avatar) update.avatar = `/uploads/${req.user._id}/${req.files.avatar[0].filename}`;
+        if(req.files?.coverImage) update.coverImage = `/uploads/${req.user._id}/${req.files.coverImage[0].filename}`;
+
+        const user = await User.findByIdAndUpdate(req.user._id, update, {new: true }).select("-password");
+
+        res.status(200).json({user, message: "profile updated successfully"});
+    } catch(err){
+        res.status(500).json({message: err.message})
+    }
+}
+
+
+export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile };

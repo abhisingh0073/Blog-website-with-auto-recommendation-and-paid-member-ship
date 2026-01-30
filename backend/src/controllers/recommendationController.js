@@ -6,6 +6,8 @@ export const getRecommendations = async (req, res) => {
         const user = req.user || null;
         let results = [];
 
+        const postSelection = "coverImage title author views publishedAt"
+
         if(user && user.interests?.length){
             const topTags = user.interests
                .sort((a, b) => b.score-a.score)
@@ -16,7 +18,10 @@ export const getRecommendations = async (req, res) => {
                 status: "public",
                 isDeleted: false,
                 tags: { $in: topTags },
-            }).limit(10);
+            })
+            .select(postSelection)
+            .populate("author", "name avatar")
+            .limit(10);
 
             const follows = await FollowModel.find({
                 follower : user._id,
@@ -26,9 +31,11 @@ export const getRecommendations = async (req, res) => {
 
             const followPosts = followIds.length ? await PostModel.find({
                 author: { $in: followIds},
-                staus: "public",
+                status: "public",
                 isDeleted: false,
-            }).limit(10):[];
+            }).select(postSelection)
+            .populate("author", "name avatar")
+            .limit(10):[];
             
             
             results = [...interestPosts, ...followPosts];
@@ -40,6 +47,8 @@ export const getRecommendations = async (req, res) => {
                 status: "public",
                 isDeleted: false,
             })
+            .select(postSelection)
+            .populate("author", "name avatar")
             .sort({views: -1, createAt: -1})
             .limit(10);
 

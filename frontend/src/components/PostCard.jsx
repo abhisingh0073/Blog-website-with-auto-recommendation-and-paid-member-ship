@@ -2,15 +2,18 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import PostCardMenuPortal from "./PostCardMenuPortal";
+import { formatRelativeTime } from "../utils/formatRelativeTime";
+
+
 
 export default function PostCard({ post }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
   const buttonRef = useRef(null);
 
-  const title = post?.title || "Professional UI Design with React & Tailwind";
-  const views = post?.views || "100K";
-  const timestamp = post?.timestamp || "2 hours ago";
+  // const title = post?.title || "Professional UI Design with React & Tailwind";
+  // const views = post?.views || "100K";
+  // const timestamp = post?.timestamp || "2 hours ago";
 
 
 
@@ -52,8 +55,8 @@ export default function PostCard({ post }) {
         {/* Thumbnail Section */}
         <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-200 shadow-sm">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40IqZ50wgWknYL8oI3-qPNjOrM5cEWNR1gw&s"
-            alt="Thumbnail"
+            src={`http://localhost:3456${post.coverImage}`}
+            alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
@@ -62,23 +65,22 @@ export default function PostCard({ post }) {
         <div className="flex gap-3 px-1">
           <div className="flex-shrink-0 pt-1">
             <img
-              src="https://cdn-icons-png.flaticon.com/512/709/709699.png"
-              alt="Channel"
+              src={post.author?.avatar || "https://cdn-icons-png.flaticon.com/512/709/709699.png"}
               className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all"
             />
           </div>
 
           <div className="flex flex-col flex-1 pr-6 relative">
             <h3 className="text-[15px] font-bold text-[#0f0f0f] leading-snug line-clamp-2 mb-1.5">
-              {title}
+              {post.title}
             </h3>
             
             <div className="text-[13px] text-[#606060] flex flex-col leading-tight">
-              <p className="hover:text-[#0f0f0f] transition-colors font-medium">Creator Name</p>
+              <p className="hover:text-[#0f0f0f] transition-colors font-medium">{post.author?.name}</p>
               <div className="flex items-center mt-0.5 opacity-90">
-                <span>{views} views</span>
+                <span>{post.views} views</span>
                 <span className="mx-1.5 text-[10px]">●</span>
-                <span>{timestamp}</span>
+                <span>{formatRelativeTime(post.publishedAt)}</span>
               </div>
             </div>
 

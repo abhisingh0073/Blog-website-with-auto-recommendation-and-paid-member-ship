@@ -31,9 +31,10 @@ import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
-import Profile from "./pages/Profile";
+import Profile from "./pages/UserProfile";
 import AppLayout from "./layouts/AppLayOut";
 import { useAuth } from "./context/AuthContext";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
 
@@ -48,7 +49,7 @@ function App() {
         <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/post/" element={<Post />} />
-        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/profile" element={<UserProfile />} />
       </Route>
     </Routes>
   );

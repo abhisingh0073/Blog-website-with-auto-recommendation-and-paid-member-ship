@@ -2,11 +2,14 @@ import { faMoon, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useToast } from "../../context/ToastContext";
 import api from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileModal({ isOpen, onClose, user }) {
   if (!isOpen) return null;
 
   const toast = useToast();
+
+  const navigate = useNavigate();
 
 
   const handleLogout = async () => {
@@ -18,6 +21,11 @@ export default function ProfileModal({ isOpen, onClose, user }) {
     } catch(error){
       toast.error(error.response.data.message || "Logout Failed");
     }
+  }
+
+  const handleProfilePage = async() => {
+    onClose();
+    navigate("/profile");
   }
 
 
@@ -46,7 +54,7 @@ export default function ProfileModal({ isOpen, onClose, user }) {
 
         
         <div className="flex flex-col gap-1">
-          <MenuButton icon={faUser} label="Your Profile" onClick={onClose} />
+          <MenuButton icon={faUser} label="Your Profile" onClick={handleProfilePage} />
           <MenuButton icon={faMoon} label="Dark Mode" onClick={() => {}} />
           
           <div className="border-b border-slate-700 my-1 mx-2" />

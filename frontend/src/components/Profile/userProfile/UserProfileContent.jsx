@@ -1,55 +1,96 @@
 import { faCamera } from "@fortawesome/free-regular-svg-icons"
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import AboutSectionModal from "../../AboutSectionModal";
 import PostCard from "../../PostCard";
 import EditProfileModal from "./EditAboutSectionModal";
 import UserPostCard from "./UserPostCard";
+import api from "../../../api/api";
+import { updateProfile } from "../../../api/userApi";
+import { useToast } from "../../../context/ToastContext";
 
-export default function UserProfileContent(){
-    const fileRef = useRef(null);
-    const profileRef = useRef(null);
-    const[coverImage ,setCoverImage] = useState();
-    const[profileImage, setProfileImage] = useState();
-    const[aboutOpen, setIsAboutOpen] = useState(false);
-    const[editAboutOpen, setIsEditAboutOpen] = useState(false);
-    const[followers, setFollowers] = useState(128);
-    const[following, setFollowing] = useState(false);
+export default function UserProfileContent({posts, userData}){
 
-    const [userData, setUserData] = useState({
-  name: "Abhishek Kumar Singh",
-  bio: "Hi there! I'm Abhishek, a full-stack developer sharing coding tutorials and tech reviews...",
-  socials: [
-    { platform: "Twitter", url: "https://twitter.com/abhishek" },
-    { platform: "Instagram", url: "https://instagram.com/abhishek" }
-  ]
-});
+  const apiUrl = "http://localhost:3456";
+  const toast = useToast();
+  
+  const fileRef = useRef(null);
+  const profileRef = useRef(null);
+
+  const [coverImage, setCoverImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [followers, setFollowers] = useState(0);
+  const [aboutOpen, setIsAboutOpen] = useState(false);
+  const [editAboutOpen, setIsEditAboutOpen] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      setCurrentUser(userData);
+      setFollowers(userData.followers?.length || 0);
+      setCoverImage(userData.coverImage ? `${apiUrl}${userData.coverImage}` : null);
+      setProfileImage(userData.avatar ? `${apiUrl}${userData.avatar}` : null);
+    }
+  }, [userData]);
+
+
+
 
     const tabs = ["Posts", "Videos"];
     const [activeTab, setActiveTab] = useState("Posts");
 
-    const handleCoverImage = (e) => {
+//     if(!userData) {
+//       return toast.error("first loggedin");
+//     }
+if (!currentUser) {
+  return <div className="text-black p-6">Loading profile...</div>;
+}
+
+
+    const handleCoverImage = async (e) => {
         const file = e.target.files[0];
         if(!file) return;
 
-        const imageUrl = URL.createObjectURL(file);
-        setCoverImage(imageUrl);
+        const formData = new FormData();
+        formData.append("coverImage", file);
+       
+        try{
+          const res = await updateProfile(formData);
+          setCoverImage(`${apiUrl}${res.data.user.coverImage}`);
+          setCurrentUser(res.data.user);
+          toast.success("Cover image updated");
+        } catch(err){
+          toast.error(err.response.data.message);
+        }
+        
     }
 
-    const handleProfileImage = (e) => {
+
+    const handleProfileImage = async (e) => {
         const file = e.target.files[0];
         if(!file) return;
 
-        const imageUrl = URL.createObjectURL(file);
-        setProfileImage(imageUrl);
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        try{
+          const res = await updateProfile(formData) 
+          setProfileImage(`${apiUrl}${res.data.user.avatar}`);
+          console.log(profileImage);
+        } catch(err){
+          toast.error(err.response.data.message || "Avatar upload failed");
+        }
+        
     }
 
-const handleSaveProfile = (newData) => {
-  setUserData(newData); // Update the UI with new data
-  setIsEditAboutOpen(false);
-  // Optional: Send this to your backend API
-};
+
+    const handleSaveProfile = (updatedUser) => {
+      setCurrentUser(updatedUser);
+      setIsEditAboutOpen(false);
+    };
+
+
 
     return(<>
       <div className="min-h-screen max-w-6xl mx-auto bg-slate-900 text-white pb-20">
@@ -118,11 +159,10 @@ const handleSaveProfile = (newData) => {
          <div className=" relative group h-40 w-40 rounded-full overflow-hidden border-4 border-[#0f0f0f]">
            
             <img
-              src={profileImage || "/avatar.png"}
+              src={profileImage}
               alt="Channel profile"
               className="w-full h-full bg-white object-cover"
             />
-
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {profileImage && (<button 
                               onClick={() => setProfileImage(null)}
@@ -133,7 +173,6 @@ const handleSaveProfile = (newData) => {
                               </button>)
               }
               
-    
               <button
                 type="button"
                 onClick={() => profileRef.current.click()}
@@ -154,7 +193,7 @@ const handleSaveProfile = (newData) => {
          
 
          <div className="flex flex-col gap-2 text-white">
-           <h1 className="text-4xl font-bold">{userData.name}</h1>
+           <h1 className="text-4xl font-bold">{currentUser.name}</h1>
 
           <p className="text-sm mt-3 font-medium text-slate-200">
             {followers.toLocaleString()} subscribers · 300 posts
@@ -163,7 +202,7 @@ const handleSaveProfile = (newData) => {
           <button 
           onClick={() => setIsAboutOpen(!aboutOpen)}
           className="text-sm text-slate-400 cursor-pointer hover:text-indigo-400 transition block text-left">
-           <p>Hi there! I'm Abhishek, a full-stack developer sharing coding tutorials and tech reviews...</p>
+           <p>{currentUser.bio}...</p>
            <span>more</span>
          </button>
         
@@ -215,7 +254,7 @@ const handleSaveProfile = (newData) => {
     <EditProfileModal
       isOpen={editAboutOpen}
       onClose={() => setIsEditAboutOpen(false)}
-      initialData={userData}
+      initialData={currentUser}
       onSave={handleSaveProfile}
     />
 

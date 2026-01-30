@@ -15,6 +15,14 @@ import recommendationsRouter from './routes/recommendationRoutes.js';
 
 import cors from "cors";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ serve uploads folder
+
 
 
 const app = express();
@@ -51,6 +59,7 @@ app.use("/profile", profileRouter);
 app.use("/feed", feedRouter);
 app.use("/recommendations", recommendationsRouter)
 
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 
 

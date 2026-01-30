@@ -3,6 +3,7 @@ import slugify from "slugify";
 import PostReactionModel from "../models/PostReactionModel.js";
 import ReadLaterModel from "../models/ReadLaterModel.js";
 import ReadPostModel from "../models/ReadPostModel.js";
+import { fstat } from "fs";
 
 
 export async function createPost(req, res){
@@ -15,7 +16,6 @@ export async function createPost(req, res){
               category, 
               status, 
               isMembersOnly,
-              coverImage 
             } = req.body;
 
         const user = req.user;
@@ -41,7 +41,7 @@ export async function createPost(req, res){
             category,
             status,
             isMembersOnly,
-            coverImage,
+            coverImage: req.file ? `/uploads/${user._id}/${req.file.filename}` : null, 
             readingTime,
             publishedAt,
 

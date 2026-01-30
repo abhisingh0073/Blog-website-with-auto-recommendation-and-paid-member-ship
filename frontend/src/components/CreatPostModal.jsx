@@ -16,6 +16,8 @@ export default function CreatePostModal({ isOpen, onClose }) {
 
     const imageRef = useRef(null);
     const [coverImage, setCoverImage] = useState();
+    const [coverFile, setCoverFile] = useState(null);
+
     const [form, setForm] = useState({
       title: "",
       content: "",
@@ -30,12 +32,14 @@ export default function CreatePostModal({ isOpen, onClose }) {
         const file = e.target.files[0];
         if(!file) return;
 
+        setCoverFile(file);
         const previewUrl = URL.createObjectURL(file);
         setCoverImage(previewUrl)
     }
 
     const handleRemove = () => {
         setCoverImage();
+        setCoverFile(null);
         imageRef.current.value = "";
     }
 
@@ -51,16 +55,22 @@ export default function CreatePostModal({ isOpen, onClose }) {
       setLoading(true);
 
       try{
-        const res = await createPost({
-          postTitle: form.title,
-          postContent: form.content,
-          tags:form.tags,
-          category: form.category,
-          status: form.status,
-          excerpt: form.excerpt,
-          isMembersOnly: form.isMembersOnly,
-          coverImage,
-        });
+
+        const formData = new FormData();
+
+          formData.append("postTitle", form.title);
+          formData.append("postContent", form.content);
+          formData.append("tags", form.tags);
+          formData.append("category", form.category);
+          formData.append("status", form.status);
+          formData.append("excerpt", form.excerpt);
+          formData.append("isMembersOnly", form.isMembersOnly); 
+          
+          if(coverFile){
+            formData.append("coverImage", coverFile);
+          }
+
+        const res = await createPost(formData);
 
         toast.success(res.data.message);
         setLoading(false);
@@ -81,7 +91,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
   return (
     <div className="fixed flex inset-0 z-50 w-full bg-slate-100">
 
-      <form action="" onSubmit={handleSubmit}  className="flex w-full h-full">
+      <form action="" onSubmit={handleSubmit} encType="multipart/form-data"  className="flex w-full h-full">
         <div className="m-3 w-full flex flex-col items-center">
             <input type="text" 
               name="title"
@@ -116,6 +126,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
               </button>
   
               <select
+                name="status"
                 value={form.status}
                 onChange={handleChange} 
                 className="px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 font-medium outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all duration-200 cursor-pointer shadow-sm hover:border-slate-400"
