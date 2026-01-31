@@ -48,7 +48,7 @@ function App() {
       {/* Layout Route */}
         <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/post/" element={<Post />} />
+        <Route path={"/p/:postId"} element={<Post />} />
         <Route path="/profile" element={<UserProfile />} />
       </Route>
     </Routes>

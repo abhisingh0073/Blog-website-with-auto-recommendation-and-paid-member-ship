@@ -4,7 +4,7 @@ import { toggleFollow } from "../controllers/followController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { setInitialInterests } from "../controllers/userInterestController.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
-const { handleLogin, handleSignUp, handleLogOut , userProfile,updateProfile} = userController;
+const { handleLogin, handleSignUp, handleLogOut , userProfile,updateProfile, fetchUserPost} = userController;
 
 
 
@@ -30,6 +30,7 @@ router.put("/profile", authMiddleware, upload.fields([
 ]), updateProfile)
 
 
+router.get("/post", authMiddleware, fetchUserPost)
 
 
 

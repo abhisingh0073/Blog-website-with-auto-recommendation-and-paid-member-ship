@@ -119,4 +119,19 @@ async function updateProfile(req, res){
 }
 
 
-export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile };
+
+async function fetchUserPost(req, res){
+
+    const postSelection = "_id coverImage title author views publishedAt createdAt status"
+    const user = req.user;
+
+    const posts = await PostModel.find({author: user._id})
+                 .select(postSelection)
+                 .populate("author", "name avatar")
+                 .sort({createdAt: -1});
+
+    return res.status(200).json({posts});
+}
+
+
+export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile , fetchUserPost};

@@ -11,15 +11,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { formatRelativeTime } from "../../utils/formatRelativeTime";
 
-export default function PostRightSideBar() {
-  const [liked, setLiked] = useState(null); 
-  const [saved, setSaved] = useState(false);
-  const [followers, setFollowers] = useState(128);
-  const [following, setFollowing] = useState(false);
+export default function PostRightSideBar({post , reaction, user}) {
+  const [liked, setLiked] = useState(reaction.userReaction); 
+  const [saved, setSaved] = useState(reaction.isSaved);
+  const [followers, setFollowers] = useState(reaction.totalFollower);
+  const [following, setFollowing] = useState(reaction.following);
 
-  const [likeCount, setLikeCount] = useState(1000);
-  const [dislikeCount, setDislikeCount] = useState(100);
+  const [likeCount, setLikeCount] = useState(post.likesCount);
+  const [dislikeCount, setDislikeCount] = useState(post.dislikesCount);
+
+    const apiUrl = "http://localhost:3456";
+
 
   const toggleFollow = () => {
     setFollowing((prev) => !prev);
@@ -28,14 +32,13 @@ export default function PostRightSideBar() {
 
  
   const handleLike = () => {
-    if (liked === true) {
-      // Un-liking
+
+      if (liked === true) {
       setLiked(null);
       setLikeCount((prev) => prev - 1);
     } else {
-      // Transitioning from Dislike to Like
+
       if (liked === false) setDislikeCount((prev) => prev - 1);
-      
       setLiked(true);
       setLikeCount((prev) => prev + 1);
     }
@@ -43,13 +46,11 @@ export default function PostRightSideBar() {
 
   const handleDislike = () => {
     if (liked === false) {
-      // Un-disliking
       setLiked(null);
       setDislikeCount((prev) => prev - 1);
+
     } else {
-      // Transitioning from Like to Dislike
       if (liked === true) setLikeCount((prev) => prev - 1);
-      
       setLiked(false);
       setDislikeCount((prev) => prev + 1);
     }
@@ -61,12 +62,12 @@ export default function PostRightSideBar() {
       <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
         <div className="flex flex-row gap-3 items-center">
            <img
-             src="https://i.pravatar.cc/40"
+             src={`${apiUrl}${post.author.avatar}`}
               alt="User avatar"
               className="w-10 h-10 rounded-full object-cover"
            />
            <h3 className="text-lg font-bold text-slate-900 leading-tight">
-              Abhishek Kumar Singh
+              {post.author.name}
              </h3> 
         </div>
         
@@ -88,9 +89,9 @@ export default function PostRightSideBar() {
       {/* Actions Card */}
       <div className="border border-slate-200 rounded-xl p-2 bg-white shadow-sm overflow-hidden">
         <div className="flex p-3 gap-3 items-center">
-            <h3 className="text-sm font-medium text-slate-600 ">100k views</h3>
+            <h3 className="text-sm font-medium text-slate-600 ">{post.views} views</h3>
             <span className="text-slate-300">|</span>
-            <h3 className="text-sm font-medium text-slate-600">2 month ago</h3>
+            <h3 className="text-sm font-medium text-slate-600">{formatRelativeTime(post.publishedAt)}</h3>
         </div>
 
         <div className="h-[1px] bg-slate-100 my-1 mx-2" />
@@ -148,8 +149,11 @@ export default function PostRightSideBar() {
   {/* Add Comment */}
   <div className="flex gap-3 px-4 py-4">
     {/* Avatar */}
-    <img
-      src="https://i.pravatar.cc/40"
+
+    {user && (
+      <>
+     <img
+      src={`${apiUrl}${user.avatar}`}
       alt="User avatar"
       className="w-10 h-10 rounded-full object-cover"
     />
@@ -170,7 +174,12 @@ export default function PostRightSideBar() {
           Comment
         </button>
       </div>
-    </div>
+    </div>     
+      </>
+
+
+    )}
+
   </div>
 </div>
 

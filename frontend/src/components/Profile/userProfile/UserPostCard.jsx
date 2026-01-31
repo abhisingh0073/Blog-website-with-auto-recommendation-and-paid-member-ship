@@ -3,18 +3,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import PostCardMenuPortal from "./UserPostCardMenuPortal";
 import EditPostModal from "./EditPostModal";
+import { formatRelativeTime } from "../../../utils/formatRelativeTime";
+import { useNavigate } from "react-router-dom";
 
 export default function UserPostCard({ post }) {
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const buttonRef = useRef(null);
+  const navigate = useNavigate();
 
-  const title = post?.title || "Professional UI Design with React & Tailwind";
-  const views = post?.views || "100K";
-  const timestamp = post?.timestamp || "2 hours ago";
-
-
+  const apiUrl = "http://localhost:3456";
 
   const openMenu = (e) => {
     e.stopPropagation();
@@ -38,6 +38,8 @@ export default function UserPostCard({ post }) {
 
 
 
+
+
   return (
     <>
      
@@ -49,38 +51,45 @@ export default function UserPostCard({ post }) {
       )}
 
 
-      <div className="flex flex-col gap-3 cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl pb-4 relative">
+      <div className="flex flex-col gap-3 cursor-pointer group transition-color duration-200 ease-out hover:-translate-y-1 hover:bg-slate-300/5 rounded-xl pb-4 relative"
+          onClick={() => navigate(`/p/${post._id}`)}
+          >
         
-        {/* Thumbnail Section */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+        {/* cover image */}
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-200" >
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40IqZ50wgWknYL8oI3-qPNjOrM5cEWNR1gw&s"
+            src={`${apiUrl}${post.coverImage}`}
             alt="Thumbnail"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover object-cover"
           />
         </div>
 
         {/* Content Section */}
         <div className="flex gap-3 px-1">
-          <div className="flex-shrink-0 pt-1">
+          <div className="flex-shrink-0 pt-1"
+              onClick={(e) => {
+              e.stopPropagation();
+              navigate("/profile");
+              }}
+          >
             <img
-              src="https://cdn-icons-png.flaticon.com/512/709/709699.png"
+              src={`${apiUrl}${post.author.avatar}`}
               alt="Channel"
-              className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all"
+              className="w-9 h-9 rounded-full hover:ring-1 ring-slate-100 transition-all"
             />
           </div>
 
           <div className="flex flex-col flex-1 pr-6 relative">
-            <h3 className="text-[15px] font-bold text-[#0f0f0f] leading-snug line-clamp-2 mb-1.5">
-              {title}
+            <h3 className="text-[15px] font-bold leading-snug line-clamp-2 mb-1.5">
+              {post.title}
             </h3>
             
             <div className="text-[13px] text-[#606060] flex flex-col leading-tight">
-              <p className="hover:text-[#0f0f0f] transition-colors font-medium">Creator Name</p>
+              <p className="hover:text-[#0f0f0f] transition-colors font-medium">{post.author.name}</p>
               <div className="flex items-center mt-0.5 opacity-90">
-                <span>{views} views</span>
+                <span>{post.views} views</span>
                 <span className="mx-1.5 text-[10px]">●</span>
-                <span>{timestamp}</span>
+                <span>{post.publishedAt ? formatRelativeTime(post.publishedAt) : formatRelativeTime(post.createdAt) }</span>
               </div>
             </div>
 
@@ -88,13 +97,17 @@ export default function UserPostCard({ post }) {
             <button
               ref={buttonRef}
               onClick={openMenu}
-              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/5"
+              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-slate-200/20 cursor-pointer"
             >
               <FontAwesomeIcon icon={faEllipsisVertical} />
             </button>
 
+
           </div>
         </div>
+
+        <p className={`absolute top-0 m-2 p-1 font-bold text-xs rounded-lg ${post.status === "private" ? "text-red-700 bg-slate-500/50" :" bg-slate-500/30"} `}>{post.status}</p>
+
       </div>
 
       {menuOpen && (

@@ -19,9 +19,6 @@ export default function useUserProfileApi(){
         .finally(() => {setLoading(false)});
     }, []);
 
-
-
-
     return {posts, userData, loading, error}
 }
 
@@ -30,4 +27,11 @@ export const updateProfile = (data) => {
     return api.put("/user/profile", data, {
         withCredentials: true,
     });
+}
+
+
+export const fetchUserPosts = async () => {
+    const fetchedData = await api.get("/user/post", {withCredentials: true});
+
+    return fetchedData;
 }

@@ -7,7 +7,7 @@ import PostCard from "../../PostCard";
 import EditProfileModal from "./EditAboutSectionModal";
 import UserPostCard from "./UserPostCard";
 import api from "../../../api/api";
-import { updateProfile } from "../../../api/userApi";
+import { updateProfile, fetchUserPosts } from "../../../api/userApi";
 import { useToast } from "../../../context/ToastContext";
 
 export default function UserProfileContent({posts, userData}){
@@ -18,12 +18,19 @@ export default function UserProfileContent({posts, userData}){
   const fileRef = useRef(null);
   const profileRef = useRef(null);
 
+
   const [coverImage, setCoverImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [followers, setFollowers] = useState(0);
   const [aboutOpen, setIsAboutOpen] = useState(false);
   const [editAboutOpen, setIsEditAboutOpen] = useState(false);
+  const [tabData, setTabData] = useState([]);
+  const [tabLoading, setTabLoading] = useState(false);
+  
+    const tabs = ["Posts", "Videos"];
+    const [activeTab, setActiveTab] = useState("Posts");
+
 
   useEffect(() => {
     if (userData) {
@@ -36,13 +43,43 @@ export default function UserProfileContent({posts, userData}){
 
 
 
+    useEffect(() => {
 
-    const tabs = ["Posts", "Videos"];
-    const [activeTab, setActiveTab] = useState("Posts");
+      let isMounted = true;
 
-//     if(!userData) {
-//       return toast.error("first loggedin");
-//     }
+      const loadTabData = async () => {
+        setTabLoading(true);
+
+        try{
+          if(activeTab === "Posts"){
+            const posts = await fetchUserPosts();
+            console.log(posts);
+            if (isMounted) setTabData(posts.data.posts);
+          }
+
+          if(activeTab === "Videos"){
+            if (isMounted) setTabData([]);
+          }
+        } catch(err){
+          if(isMounted){
+            toast.error(err.data.message || "Failed to load post");
+          }
+          
+        } finally{
+          if (isMounted) setTabLoading(false);
+        }
+      };
+
+      loadTabData();
+
+      return () => {
+        isMounted = false;
+      }
+    }, [activeTab]);
+
+
+
+
 if (!currentUser) {
   return <div className="text-black p-6">Loading profile...</div>;
 }
@@ -92,9 +129,14 @@ if (!currentUser) {
 
 
 
+
+
     return(<>
       <div className="min-h-screen max-w-6xl mx-auto bg-slate-900 text-white pb-20">
        <div className="max-w-6xl mx-auto px-4 pt-6">
+
+
+ 
 
 
          {/* cover imagr */}
@@ -235,9 +277,27 @@ if (!currentUser) {
        </div>
 
        <div className="mt-3">
-          <div className="max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
-           <UserPostCard />
-       </div>
+          <div className="max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {tabLoading && <p className="text-slate-400">Loading...</p>}
+
+            {!tabLoading && activeTab === "Posts" && (
+              tabData.length > 0 ? (
+                tabData.map(post => (
+                  <UserPostCard key={post._id} post={post} />
+                ))
+              ) : (
+                <p className="text-slate-400">No posts</p>
+              )
+            )}
+
+
+            {!tabLoading && activeTab === "Videos" && (
+              <p className="text-slate-400">No videos yet</p>
+            )}
+
+          </div>
+
        
   </div>
        

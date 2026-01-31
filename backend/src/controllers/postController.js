@@ -4,6 +4,7 @@ import PostReactionModel from "../models/PostReactionModel.js";
 import ReadLaterModel from "../models/ReadLaterModel.js";
 import ReadPostModel from "../models/ReadPostModel.js";
 import { fstat } from "fs";
+import FollowModel from "../models/FollowModel.js";
 
 
 export async function createPost(req, res){
@@ -177,7 +178,7 @@ export async function readPost(req, res) {
         const { postId } = req.params;
         const user = req.user || null;
 
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).populate("author", "name avatar");
         if(!post || post.isDeleted || post.status != "public"){
             return res.status(404).json({ message: "Post not found"});
         }
@@ -188,6 +189,14 @@ export async function readPost(req, res) {
         let userReaction = null;
         let isSaved = false;
         let readProgress = 0;
+        let following = false;
+        
+
+        const totalFollower = await FollowModel.countDocuments({
+            following: post.author,
+        })
+
+
 
         if(user){
             const reactionData = await PostReactionModel.findOne({
@@ -216,10 +225,19 @@ export async function readPost(req, res) {
             if(readProgress){
                 readProgress = readProgressData.progress;
             }
+
+
+            const followData = await FollowModel.findOne({
+                follower: user._id,
+                following: post.author,
+            });
+            if(followData){
+                following=true;
+            }
         }
 
         return res.status(200).json({
-            posts: {
+            post: {
                _id: post._id,
                title: post.title,
                content: post.content,
@@ -227,11 +245,23 @@ export async function readPost(req, res) {
                likesCount: post.likesCount,
                dislikesCount: post.dislikesCount,
                author: post.author,
-               createdAt: post.createdAt, 
+               publishedAt: post.publishedAt,
+               createdAt: post.createdAt,
+
             },
-            userReaction,
-            isSaved,
-            readProgress,
+            sidebarinfo : {
+                 userReaction,
+                 isSaved,
+                 readProgress,
+                 following,
+                 totalFollower,
+            },
+            user: user ? {
+                _id: user._id,
+                name: user.name,
+                avatar: user.avatar,
+            }: null,
+           
         });
 
     }catch(error){
