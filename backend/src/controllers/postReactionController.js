@@ -42,7 +42,7 @@ export const reactToPost = async (req, res) => {
                     2
                 ); 
 
-            return res.json({message: `${reaction} added`});
+            return res.json({message: `you ${reaction} the post`});
         }
 
         if(existing.reaction === reaction){

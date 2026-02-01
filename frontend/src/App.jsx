@@ -35,6 +35,7 @@ import Profile from "./pages/UserProfile";
 import AppLayout from "./layouts/AppLayOut";
 import { useAuth } from "./context/AuthContext";
 import UserProfile from "./pages/UserProfile";
+import CreatorProfile from "./pages/CreatorProfile";
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path={"/p/:postId"} element={<Post />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/c" element={<CreatorProfile/>}/>
       </Route>
     </Routes>
   );

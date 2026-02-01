@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import PostCardMenuPortal from "./PostCardMenuPortal";
 import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -11,11 +12,7 @@ export default function PostCard({ post }) {
   const [menuPos, setMenuPos] = useState(null);
   const buttonRef = useRef(null);
 
-  // const title = post?.title || "Professional UI Design with React & Tailwind";
-  // const views = post?.views || "100K";
-  // const timestamp = post?.timestamp || "2 hours ago";
-
-
+  const navigate = useNavigate();
 
   const openMenu = (e) => {
     e.stopPropagation();
@@ -50,14 +47,16 @@ export default function PostCard({ post }) {
       )}
 
 
-      <div className="flex flex-col gap-3 cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl pb-4 relative">
+      <div 
+      onClick={() => navigate(`/p/${post._id}`)}
+      className="flex flex-col gap-3 cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl pb-4 relative">
         
         {/* Thumbnail Section */}
         <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-200 shadow-sm">
           <img
             src={`http://localhost:3456${post.coverImage}`}
             alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover "
           />
         </div>
 
@@ -65,8 +64,9 @@ export default function PostCard({ post }) {
         <div className="flex gap-3 px-1">
           <div className="flex-shrink-0 pt-1">
             <img
-              src={post.author?.avatar || "https://cdn-icons-png.flaticon.com/512/709/709699.png"}
+              src={`http://localhost:3456${post.author?.avatar}` || "https://cdn-icons-png.flaticon.com/512/709/709699.png"}
               className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all"
+              onClick={() => navigate(`/c/${post.author._id}`)}
             />
           </div>
 

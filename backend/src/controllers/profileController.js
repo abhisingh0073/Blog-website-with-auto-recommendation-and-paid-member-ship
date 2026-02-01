@@ -64,3 +64,55 @@ export const getUserProfile = async (req, res) => {
         return res.status(500).json({ message: "Something went wrong" });
     }
 }
+
+
+
+
+export const getCreatorProfile = async (req, res) => {
+    const user = req.user;
+    const {creatorId} = req.params;
+    let following = false;
+
+    try{
+
+        const creator = await User.findById(creatorId).select("name bio avatar createdAt");
+
+        if(!creator) return res.status(401).json({message: "Not Found"});
+
+        const followerCount = await FollowModel.countDocuments({
+            following: creatorId,
+        });
+
+        const isFollowing = await FollowModel.find({
+            following: creatorId,
+            follower: user._id,
+        });
+        if(isFollowing){
+            following= true;
+        }
+
+        
+        const posts = await PostModel.find({
+            author: creatorId,
+            status: "public",
+            isDeleted: false,
+        }).select("title coverImage views publishedAt").populate("author", "name avatar").sort({createdAt: -1});
+
+        return res.json({
+            creator:{
+                _id: creator._id,
+                name: creator.name,
+                bio: creator.bio,
+                follower: followerCount,
+                isFollowing: following,
+            },
+            posts,
+
+        });
+
+
+    } catch(error){
+        console.error(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+}

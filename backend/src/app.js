@@ -51,7 +51,7 @@ app.use("/user", userRoute);
 app.use("/auth", googleAuthRoutes);
 
 app.use("/post", postRoutes);
-app.use("/post/reaction", postReactionRouter)
+app.use("/reaction", postReactionRouter)
 app.use("/read-later", readLaterRouter);
 app.use("/read-post", readPostRouter);
 app.use("/post-view", postViewRouter);

@@ -36,7 +36,7 @@ export const toggleReadLater = async (req, res) => {
         }
 
         await existing.deleteOne();
-        return res.json({message: "Post is removed from read-later"});
+        return res.json( {message: "Post is removed from read-later"});
     } catch(error){
         console.error(error);
         return res.status(500).json({message: "Something went wrong"});

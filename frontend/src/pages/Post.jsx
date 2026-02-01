@@ -1,16 +1,8 @@
-// import PostLayouts from "../layouts/PostLayouts";
-
-// export default function Post(){
-//     return(
-//         <PostLayouts/>
-//     )
-// }
-
 
 import { useParams } from "react-router-dom";
 import PostContent from "../components/post/PostContent";
 import PostRightSideBar from "../components/post/PostRightSideBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../api/api";
 import { useToast } from "../context/ToastContext";
 
@@ -24,7 +16,12 @@ export default function Post() {
   const [error, setError] = useState(null)
   const toast = useToast();
 
+  const hasFetched = useRef(false);
+
   useEffect(() => {
+    if(hasFetched.current) return;
+    hasFetched.current = true;
+
     const fetchPost = async () => {
       try{
         const res = await api.get(`/post/${postId}`,
