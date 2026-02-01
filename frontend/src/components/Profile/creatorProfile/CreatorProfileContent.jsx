@@ -5,14 +5,25 @@ import React, { useRef, useState } from "react"
 import AboutSectionModal from "../../AboutSectionModal";
 import PostCard from "../../PostCard";
 
-export default function CreatorProfileContent(){
+export default function CreatorProfileContent({creator, posts}){
+
+   const apiUrl = "http://localhost:3456";
+
+
+   if(!creator){
+    return(
+      <div>cretor is not found</div>
+    )
+   }
 
     const[aboutOpen, setIsAboutOpen] = useState(false);
-    const[followers, setFollowers] = useState(128);
-    const[following, setFollowing] = useState(false);
+    const[followers, setFollowers] = useState(100);
+    const[following, setFollowing] = useState(true);
 
     const tabs = ["Posts", "Videos"];
     const [activeTab, setActiveTab] = useState("Posts");
+
+
 
 
     const toggleFollow = () => {
@@ -28,7 +39,7 @@ export default function CreatorProfileContent(){
          {/* cover imagr */}
         <div className="relative aspect-[6/1] w-full rounded-2xl overflow-hidden ">
             {true ? (<img 
-                          src=""
+                          src={`${apiUrl}${creator.coverImage}`}
                           alt="Banner" 
                           className="w-full h-full object-cover"
                          />) : (<div className="flex w-full h-full bg-white/50 items-center justify-center">
@@ -45,7 +56,7 @@ export default function CreatorProfileContent(){
          <div className=" relative group h-40 w-40 rounded-full overflow-hidden border-4 border-[#0f0f0f]">
            
             <img
-              src={ "/avatar.png"}
+              src={`${apiUrl}${creator.avatar}`}
               alt="Channel profile"
               className="w-full h-full bg-white object-cover"
             />
@@ -53,10 +64,10 @@ export default function CreatorProfileContent(){
          
 
          <div className="flex flex-col gap-2 text-white">
-           <h1 className="text-4xl font-bold">Abhishek Kumar Singh</h1>
+           <h1 className="text-4xl font-bold">{creator.name}</h1>
 
           <p className="text-sm mt-3 font-medium text-slate-200">
-            {followers.toLocaleString()} subscribers · 300 posts
+            {followers} Followers · 100 posts
           </p>
 
           <button 

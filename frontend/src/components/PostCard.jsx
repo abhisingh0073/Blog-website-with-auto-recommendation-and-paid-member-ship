@@ -66,7 +66,9 @@ export default function PostCard({ post }) {
             <img
               src={`http://localhost:3456${post.author?.avatar}` || "https://cdn-icons-png.flaticon.com/512/709/709699.png"}
               className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all"
-              onClick={() => navigate(`/c/${post.author._id}`)}
+              onClick={(e) =>{ 
+                 e.stopPropagation();
+                navigate(`/c/${post.author._id}`)}}
             />
           </div>
 

@@ -69,27 +69,30 @@ export const getUserProfile = async (req, res) => {
 
 
 export const getCreatorProfile = async (req, res) => {
-    const user = req.user;
+    const user = req.user || null;
     const {creatorId} = req.params;
     let following = false;
 
     try{
 
-        const creator = await User.findById(creatorId).select("name bio avatar createdAt");
+        const creator = await User.findById(creatorId).select("name bio avatar coverImage createdAt");
 
-        if(!creator) return res.status(401).json({message: "Not Found"});
+        if(!creator) return res.status(404).json({message: "Not Found"});
 
         const followerCount = await FollowModel.countDocuments({
             following: creatorId,
         });
 
-        const isFollowing = await FollowModel.find({
+        if(user){
+        const isFollowing = await FollowModel.findOne({
             following: creatorId,
             follower: user._id,
         });
         if(isFollowing){
             following= true;
+        }            
         }
+
 
         
         const posts = await PostModel.find({
@@ -102,6 +105,8 @@ export const getCreatorProfile = async (req, res) => {
             creator:{
                 _id: creator._id,
                 name: creator.name,
+                avatar: creator.avatar,
+                coverImage: creator.coverImage,
                 bio: creator.bio,
                 follower: followerCount,
                 isFollowing: following,

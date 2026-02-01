@@ -51,7 +51,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path={"/p/:postId"} element={<Post />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/c" element={<CreatorProfile/>}/>
+        <Route path="/c/:creatorId" element={<CreatorProfile/>}/>
       </Route>
     </Routes>
   );
