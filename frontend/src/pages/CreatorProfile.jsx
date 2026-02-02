@@ -7,7 +7,6 @@ export default function CreatorProfile(){
     const { creatorId } = useParams();
 
     const [creator, setCreator] = useState(null);
-    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -15,11 +14,8 @@ export default function CreatorProfile(){
         const creatorData = async () => {
             try{
                 const res =await creatorDataApi(creatorId);
-
-                console.log(res);
-
                 setCreator(res.data.creator);
-                setPosts(res.data.posts);
+        
             } catch(error){
                 console.log(error);
             } finally{
@@ -39,7 +35,6 @@ export default function CreatorProfile(){
         <div className="max-w-6xl mx-auto">
             <CreatorProfileContent 
                 creator= {creator}
-                posts = {posts}
             />
         </div>
     )

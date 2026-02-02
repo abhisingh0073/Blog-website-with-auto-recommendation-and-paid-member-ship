@@ -1,10 +1,18 @@
-export default function AboutSectionModal({isOpen, onClose}){
+export default function AboutSectionModal({isOpen, onClose, user}){
 
     if(!isOpen) return null;
 
+      const date = new Date(user.createdAt);
+      const dateString = date.toLocaleDateString("en-US", {
+       year: "numeric",
+       month: "short",
+       day: "numeric",
+     });
+
+
+
 return(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-   
     <div
       className="absolute inset-0 bg-black/70"
       onClick={onClose}
@@ -16,7 +24,7 @@ return(
 
    
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Netflix K-Content</h2>
+        <h2 className="text-xl font-semibold">{user.name}</h2>
         <button
           onClick={onClose}
           className="text-white/70 hover:text-white text-2xl cursor-pointer"
@@ -28,51 +36,26 @@ return(
     
       <h3 className="text-lg font-medium mb-2">Description</h3>
       <p className="text-sm text-white/80 leading-relaxed mb-4">
-        Netflix K-Content is the channel that takes you deeper into all types
-        of Netflix Korean Content you LOVE. Whether you’re in the mood for some
-        fun with the stars, want to relive your favorite moments, need help
-        deciding what to watch next based on your personal taste, or looking
-        to connect with like-minded fans, you’re in the right place.
-        <br /><br />
-        All things NETFLIX K-CONTENT.
-      </p>
-
-      <p className="text-sm text-white/80 leading-relaxed mb-4">
-        여러분이 사랑하는 넷플릭스 한국 콘텐츠의 모든 것!
-        Netflix K-Content에 모두 모였습니다.
+        {user.bio}
       </p>
 
       
       <h3 className="text-lg font-medium mb-3">Links</h3>
       <ul className="space-y-3 text-sm">
+        {user.socials.map((social) => 
         <li>
-          <a href="https://netflix.com" target="_blank" className="text-blue-400 hover:underline">
-            Netflix
+          <a href= {`${social.url}`} target="_blank" className="text-blue-400 hover:underline">
+            {socialplatform}
           </a>
-        </li>
-        <li>
-          <a href="https://instagram.com/netflixkr" target="_blank" className="text-blue-400 hover:underline">
-            Instagram
-          </a>
-        </li>
-        <li>
-          <a href="https://x.com/NetflixKR" target="_blank" className="text-blue-400 hover:underline">
-            Twitter (X)
-          </a>
-        </li>
-        <li>
-          <a href="https://tiktok.com/@netflixkr" target="_blank" className="text-blue-400 hover:underline">
-            TikTok
-          </a>
-        </li>
+        </li>)}
       </ul>
 
       
       <div className="mt-6 space-y-2 text-sm text-white/70">
         <p>🌍 United States</p>
-        <p>📅 Joined 21 Feb 2019</p>
-        <p>👥 6.23M subscribers</p>
-        <p>🎬 4,534 videos</p>
+        <p>📅 Joined {dateString}</p>
+        <p>👥 {user.follower} subscribers</p>
+        <p>🎬 {user.postCount} posts</p>
       </div>
     </div>
   </div>

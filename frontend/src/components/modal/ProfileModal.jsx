@@ -8,8 +8,10 @@ export default function ProfileModal({ isOpen, onClose, user }) {
   if (!isOpen) return null;
 
   const toast = useToast();
-
+  const apiUrl = "http://localhost:3456";
   const navigate = useNavigate();
+
+  
 
 
   const handleLogout = async () => {
@@ -40,7 +42,7 @@ export default function ProfileModal({ isOpen, onClose, user }) {
         
         <div className="flex items-center gap-3 p-3 mb-1">
           <img 
-            src={user?.avatar || "https://cdn-icons-png.flaticon.com/512/709/709699.png"} 
+            src={user ? `${apiUrl}${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/709/709699.png"} 
             alt="Profile"
             className="w-10 h-10 rounded-full border border-slate-600 object-cover"
           />

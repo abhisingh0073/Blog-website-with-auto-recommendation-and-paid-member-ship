@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatRelativeTime } from '../../utils/formatRelativeTime';
 
 // const post = {
 //   content: `
@@ -81,15 +82,15 @@ const PostContent = ({post}) => {
       {/* Meta Information */}
       <div className="mb-8 flex items-center gap-2 text-sm text-slate-500 border-b pb-6">
         <span>By</span>
-        <a href="#" className='flex gap-2 items-center'>
+        <a href={`/c/${post.author._id}`} className='flex gap-2 items-center'>
             <img 
-            src={`${apiUrl}${post.author.avatar}`} alt="React Concept Map" class="rounded-2xl shadow-xl"
+            src={`${apiUrl}${post.author?.avatar}`} alt="React Concept Map" class="rounded-2xl shadow-xl"
             className='w-4 h-4 rounded-full '
              />
-            <span className="font-semibold text-slate-800">{post.author.name}</span>
+            <span className="font-semibold text-slate-800">{post.author?.name}</span>
         </a>
         <span className="text-slate-300">•</span>
-        <span>{post.publishedAt}</span>
+        <span>{formatRelativeTime(post.publishedAt)}</span>
       </div>
 
       {/* Rendered HTML Content */}

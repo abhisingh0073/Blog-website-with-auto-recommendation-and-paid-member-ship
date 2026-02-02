@@ -14,6 +14,7 @@ import { useState } from "react";
 import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import { useToast } from "../../context/ToastContext";
 import { followApi, likeApi, readLaterApi } from "../../api/reactionApi";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -26,7 +27,9 @@ export default function PostRightSideBar({post , reaction, user}) {
 
   const [likeCount, setLikeCount] = useState(post.likesCount);
   const [dislikeCount, setDislikeCount] = useState(post.dislikesCount);
+
   const toast = useToast();
+  const navigate = useNavigate();
 
     const apiUrl = "http://localhost:3456";
 
@@ -107,9 +110,12 @@ export default function PostRightSideBar({post , reaction, user}) {
            <img
              src={`${apiUrl}${post.author.avatar}`}
               alt="User avatar"
+              onClick={() => navigate(`/c/${post.author._id}`)}
               className="w-10 h-10 rounded-full object-cover cursor-pointer border border-transparent  hover:border-slate-400 tansition-color"
            />
-           <h3 className="text-lg font-bold text-slate-900 leading-tight">
+           <h3 
+           onClick={() => navigate(`/c/${post.author._id}`)}
+           className="text-lg font-bold text-slate-900 leading-tight cursor-pointer">
               {post.author.name}
              </h3> 
         </div>

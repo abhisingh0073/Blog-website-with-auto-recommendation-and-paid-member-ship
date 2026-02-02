@@ -72,16 +72,23 @@ export const getCreatorProfile = async (req, res) => {
     const user = req.user || null;
     const {creatorId} = req.params;
     let following = false;
+    
 
     try{
 
-        const creator = await User.findById(creatorId).select("name bio avatar coverImage createdAt");
+        const creator = await User.findById(creatorId).select("name bio avatar coverImage createdAt socials");
 
         if(!creator) return res.status(404).json({message: "Not Found"});
 
         const followerCount = await FollowModel.countDocuments({
             following: creatorId,
         });
+
+        const postCount = await PostModel.countDocuments({
+            author: creatorId,
+            status: "public",
+            isDeleted: false,
+        })
 
         if(user){
         const isFollowing = await FollowModel.findOne({
@@ -94,13 +101,6 @@ export const getCreatorProfile = async (req, res) => {
         }
 
 
-        
-        const posts = await PostModel.find({
-            author: creatorId,
-            status: "public",
-            isDeleted: false,
-        }).select("title coverImage views publishedAt").populate("author", "name avatar").sort({createdAt: -1});
-
         return res.json({
             creator:{
                 _id: creator._id,
@@ -110,8 +110,10 @@ export const getCreatorProfile = async (req, res) => {
                 bio: creator.bio,
                 follower: followerCount,
                 isFollowing: following,
+                socials: creator.socials,
+                createdAt: creator.createdAt,
+                postCount: postCount,
             },
-            posts,
 
         });
 
@@ -119,5 +121,27 @@ export const getCreatorProfile = async (req, res) => {
     } catch(error){
         console.error(error);
         return res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+
+
+export const getCreatorPost = async (req, res) => {
+    const{ creatorId }= req.params;
+    try{
+        const posts = await PostModel.find({
+            author: creatorId, 
+            status: "public",
+            isDeleted: false,       
+        }).select("title coverImage views publishedAt").populate("author", "name avatar");
+
+
+        return res.status(200).json({
+            posts
+        });
+
+
+    }catch(error){
+        return res.status(500).json({message: "Something went wrong"})
     }
 }
