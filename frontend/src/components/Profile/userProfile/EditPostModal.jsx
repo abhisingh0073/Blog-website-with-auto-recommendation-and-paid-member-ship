@@ -1,45 +1,130 @@
 import { faEye, faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef, useState } from "react";
-import Tiptap from "../../Editor";
+import { useEffect, useRef, useState } from "react";
+import { useToast } from "../../../context/ToastContext";
+import Editor from "../../Editor";
+import ButtonSpinner from "../../ui/ButtonSpinner";
+import { updatePostApi } from "../../../api/postApi";
+
 
 
 
 
 export default function EditPostModal({ isOpen, onClose, initialData, onSave }) {
     if (!isOpen) return null;
+    const toast = useToast();
+    const [loading, setLoading] = useState(false);
+
+    
+    const apiUrl = "http://localhost:3456";
 
     const imageRef = useRef(null);
-    const [coverImage, setCoverImage] = useState();
-    const [content, setContent] = useState("");
+    const [coverImage, setCoverImage] = useState(`${apiUrl}${initialData.coverImage}`);
+    const [coverFile, setCoverFile] = useState(null);
+    const [postData, setPostData] = useState({
+      title: initialData.title || "",
+      content: initialData.content || "",
+      tags: initialData.tags || "",
+      status: initialData.status || "public",
+      category: initialData.category || "",
+      excerpt: "",
+      isMembersOnly: initialData.isMembersOnly ?? false,
+    });
 
     const handleSelect = (e) => {
         const file = e.target.files[0];
         if(!file) return;
 
+        setCoverFile(file);
         const previewUrl = URL.createObjectURL(file);
         setCoverImage(previewUrl)
     }
 
     const handleRemove = () => {
         setCoverImage();
+        setCoverFile(null);
         imageRef.current.value = "";
     }
 
 
+    const handleChange = (e) => {
+      setPostData({...postData, [e.target.name]: e.target.value})
+    }
+
+
+  
+    const handleSubmit = async(e) => {
+      e.preventDefault();
+
+      if(!postData.title || !postData.content){
+        alert("Title and content are required");
+        return;
+      }
+
+      setLoading(true);
+
+
+      try{
+        const formData = new FormData();
+
+        formData.append("postTitle", postData.title);
+        formData.append("postContent", postData.content);
+        formData.append("tags", postData.tags);
+        formData.append("category", postData.category);
+        formData.append("status", postData.status);
+        formData.append("excerpt", postData.excerpt);
+        formData.append("isMembersOnly", postData.isMembersOnly);
+
+        if(coverFile instanceof File){
+          formData.append("coverImage", coverFile);
+        }
+
+        const res = await updatePostApi(formData, initialData._id) ;
+
+        toast.success(res.data.message);
+        setLoading(false);
+        onClose();
+
+      }catch (err) {
+         toast.error(err.response?.data?.message || "Failed to update post");
+      } finally {
+          setLoading(false);
+        }
+
+    }
+
+useEffect(() => {
+  return () => {
+    if (coverImage?.startsWith("blob:")) {
+      URL.revokeObjectURL(coverImage);
+    }
+  };
+}, [coverImage]);
+
+
   return (
-    <div className="fixed flex inset-0 z-50 w-full bg-slate-100">
+    <div className="fixed flex inset-0 z-50 w-full bg-slate-100 text-black">
 
         {/* section 1 */}
         <div className="m-3 w-full flex flex-col items-center">
-            <input type="text" 
+            <input type="text"
+              name="title"
+              value= {postData.title} 
               placeholder="Title"
+              onChange={handleChange}
               className="w-full p-2 pb-1 text-xl outline-none border border-gray-300 bg-white placeholder-gray-200" />
             <div className="mt-3 w-[60rem] flex-1 ">
 
                 {/* Editor */}
-                <div className="flex-1 h-screen rounded-lg">
-                  <Tiptap/>  
+                <div className="flex-1 h-screen rounded-lg text-black">
+                  <Editor
+  key={initialData._id}
+  value={postData.content}
+  onChange={(html) =>
+    setPostData({ ...postData, content: html })
+  }
+/>
+
                 </div>
                  
 
@@ -58,7 +143,10 @@ export default function EditPostModal({ isOpen, onClose, initialData, onSave }) 
                 Preview
               </button>
   
-              <select 
+              <select
+                name="status"
+                value={postData.status} 
+                onChange={handleChange}
                 className="px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 font-medium outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all duration-200 cursor-pointer shadow-sm hover:border-slate-400"
               >
                 <option value="public">Public</option>
@@ -107,33 +195,70 @@ export default function EditPostModal({ isOpen, onClose, initialData, onSave }) 
             {/* tags */}
             <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
                 <h3>Tags</h3>
-                <textarea name="" id=""
-                placeholder="Add comma(,) between tags"
-                className="outline-none w-full h-[150px] border border-slate-300 resize-none p-1 rounded-lg"
+                <textarea
+                   name="tags"
+                   value={postData.tags}
+                   onChange={handleChange}
+                   placeholder="Add comma(,) between tags"
+                  className="outline-none w-full h-[150px] border border-slate-300 resize-none p-1 rounded-lg"
                 />
+
             </div>
 
             {/* category */}
             <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
                 <h3>Select Category</h3>
-                <select name="" id="" className="border rounded-lg border-slate-400 p-1 outline-none">
+                <select name="category" 
+                        value={postData.category} 
+                        onChange={handleChange}
+                        className="border rounded-lg border-slate-400 p-1 outline-none">
                     <option value="">Select</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
-                    <option value="">Hiiiiiiii</option>
+                    <option value="tech">Tech</option>
+                    <option value="programming">Programming</option>
+                    <option value="design">Design</option>
+                    <option value="lifestyle">Lifestyle</option>
                 </select>
             </div>
+
+            <div className="flex flex-row gap-2 m-3 pt-2 border-t border-slate-300">
+              <label className="font-medium">For Membersonly</label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isMembersOnly"
+                    checked={postData.isMembersOnly === true}
+                    onChange={() =>
+                      setPostData({ ...postData, isMembersOnly: true })
+                    }
+                  />
+                  Yes
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isMembersOnly"
+                    checked={postData.isMembersOnly === false}
+                    onChange={() =>
+                      setPostData({ ...postData, isMembersOnly: false })
+                    }
+                  />
+                  No
+                </label>
+            </div>  
             
-            {/* submit and cancel button */}
+        
             <div className="flex gap-3 justify-end border-t border-slate-300 m-3 pt-3">
                 <button 
                 onClick={onClose}
                 className="py-2 px-3 border border-slate-300 rounded-lg cursor-pointer font-medium hover:bg-slate-300">Cancel</button>
-                <button className="py-2 px-3 border bg-indigo-600 rounded-lg text-white cursor pointer hover:bg-indigo-700 font-medium">Submit</button>
+                <button 
+                onClick={handleSubmit}
+                disabled={loading}
+                className="py-2 px-3 border bg-indigo-600 rounded-lg text-white cursor pointer hover:bg-indigo-700 font-medium">
+                  {loading ? <ButtonSpinner/> : "Update"}
+                </button>
             </div>
            </div>
         </div>

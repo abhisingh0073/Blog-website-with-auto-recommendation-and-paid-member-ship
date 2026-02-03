@@ -9,6 +9,11 @@ export const createPost = (data) => {
 }
 
 
+export const updatePostApi = (data, postId) => {
+    return api.put(`/post/${postId}`, data, {withCredentials: true});
+}
+
+
 export const deletePostApi = (postId) => {
     return api.delete(`/post/delete/${postId}`, {withCredentials: true});
 }
