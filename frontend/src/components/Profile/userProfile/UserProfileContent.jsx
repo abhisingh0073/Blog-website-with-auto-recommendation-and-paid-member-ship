@@ -10,7 +10,8 @@ import api from "../../../api/api";
 import { updateProfile, fetchUserPosts } from "../../../api/userApi";
 import { useToast } from "../../../context/ToastContext";
 
-export default function UserProfileContent({posts, userData}){
+export default function UserProfileContent({user}){
+
 
   const apiUrl = "http://localhost:3456";
   const toast = useToast();
@@ -33,13 +34,13 @@ export default function UserProfileContent({posts, userData}){
 
 
   useEffect(() => {
-    if (userData) {
-      setCurrentUser(userData);
-      setFollowers(userData.followers?.length || 0);
-      setCoverImage(userData.coverImage ? `${apiUrl}${userData.coverImage}` : null);
-      setProfileImage(userData.avatar ? `${apiUrl}${userData.avatar}` : null);
+    if (user) {
+      setCurrentUser(user);
+      setFollowers(user.follower || 0);
+      setCoverImage( `${apiUrl}${user.coverImage}`);
+      setProfileImage(`${apiUrl}${user.avatar}`);
     }
-  }, [userData]);
+  }, [user]);
 
 
 
@@ -53,7 +54,7 @@ export default function UserProfileContent({posts, userData}){
         try{
           if(activeTab === "Posts"){
             const posts = await fetchUserPosts();
-            console.log(posts);
+
             if (isMounted) setTabData(posts.data.posts);
           }
 
@@ -76,6 +77,13 @@ export default function UserProfileContent({posts, userData}){
         isMounted = false;
       }
     }, [activeTab]);
+
+
+
+
+const handlePostDelete = (deletedId) => {
+  setTabData((prev) => prev.filter((p) => p._id !== deletedId));
+}
 
 
 
@@ -193,8 +201,7 @@ if (!currentUser) {
                />
             
         </div>
-        
-
+     
 
         {/* profile image */}
         <div className="flex gap-6 mt-6  items-start md:items-center">
@@ -235,16 +242,16 @@ if (!currentUser) {
          
 
          <div className="flex flex-col gap-2 text-white">
-           <h1 className="text-4xl font-bold">{currentUser.name}</h1>
+           <h1 className="text-4xl font-bold">{user.name}</h1>
 
           <p className="text-sm mt-3 font-medium text-slate-200">
-            {followers.toLocaleString()} subscribers · 300 posts
+            {followers.toLocaleString()} subscribers · {user.postsCount} posts
           </p>
 
           <button 
           onClick={() => setIsAboutOpen(!aboutOpen)}
           className="text-sm text-slate-400 cursor-pointer hover:text-indigo-400 transition block text-left">
-           <p>{currentUser.bio}...</p>
+           <p>{user.bio}...</p>
            <span>more</span>
          </button>
         
@@ -284,7 +291,10 @@ if (!currentUser) {
             {!tabLoading && activeTab === "Posts" && (
               tabData.length > 0 ? (
                 tabData.map(post => (
-                  <UserPostCard key={post._id} post={post} />
+                  <UserPostCard 
+                    key={post._id} 
+                    post={post} 
+                    onDelete={handlePostDelete}/>
                 ))
               ) : (
                 <p className="text-slate-400">No posts</p>
@@ -309,6 +319,7 @@ if (!currentUser) {
     <AboutSectionModal
       isOpen={aboutOpen}
       onClose={() => setIsAboutOpen(false)}
+      user={user}
     />
 
     <EditProfileModal

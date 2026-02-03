@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import{ matchPasswordAndGenerateToken, createTokenForUser} from "../services/authantication.js";
 import PostModel from "../models/PostModel.js";
+import FollowModel from "../models/FollowModel.js";
 
 async function handleSignUp(req, res) {
     try{
@@ -84,16 +85,54 @@ async function handleLogOut(req, res){
 
 async function userProfile(req, res){
 
-    const postSelection = "coverImage title author views publishedAt";
-    // const user = req.user;
 
-    const user = await User.findById(req.user._id).select("-password");
-    const posts = await PostModel.find({author: req.user._id})
-                .select(postSelection)
-                .sort({createdAt: -1});
+        try{
+            // const { userId } = req.params;
+            const userId = req.user._id || null;
     
-    return res.status(200).json({user, posts});
+            const user = await User.findById(userId).select(
+                "name avatar bio createdAt socials coverImage"
+            );
+    
+            if(!user){
+                return res.status(404).json({message: " User not found"});
+            }
+    
+            const postCount = await PostModel.countDocuments({
+                author: userId,
+            });
+    
+    
+            const follower = await FollowModel.countDocuments({
+                following: userId,
+            })
+    
+
+            return res.status(200).json({
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    avatar: user.avatar,
+                    coverImage: user.coverImage,
+                    bio: user.bio,
+                    socials: user.socials,
+                    createdAt: user.createdAt,
+                    postCount,
+                    follower,
+                    
+                },
+                
+            });
+
+
+    
+    
+        } catch(error){
+            console.error(error);
+            return res.status(500).json({ message: "Something went wrong" });
+        }
 }
+    
 
 
 async function updateProfile(req, res){
@@ -125,7 +164,7 @@ async function fetchUserPost(req, res){
     const postSelection = "_id coverImage title author views publishedAt createdAt status"
     const user = req.user;
 
-    const posts = await PostModel.find({author: user._id})
+    const posts = await PostModel.find({author: user._id, isDeleted: false})
                  .select(postSelection)
                  .populate("author", "name avatar")
                  .sort({createdAt: -1});

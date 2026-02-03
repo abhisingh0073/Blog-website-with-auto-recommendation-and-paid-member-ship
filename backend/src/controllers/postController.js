@@ -161,6 +161,7 @@ export async function deletePost(req, res){
 
       post.isDeleted = true;
       await post.save();
+      
      return res.status(200).json({
       message: "Post deleted successfully",
     });

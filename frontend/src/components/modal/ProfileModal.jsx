@@ -8,8 +8,8 @@ export default function ProfileModal({ isOpen, onClose, user }) {
   if (!isOpen) return null;
 
   const toast = useToast();
-  const apiUrl = "http://localhost:3456";
   const navigate = useNavigate();
+  const apiUrl = "http://localhost:3456";
 
   
 

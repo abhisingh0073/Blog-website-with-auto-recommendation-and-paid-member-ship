@@ -59,3 +59,25 @@ export const getReadLaterPosts = async (req, res) => {
     }
     
 }
+
+
+export const isReadLaterPost = async (req, res) => {
+    try{
+    const {postId} = req.params;
+    const userId = req.user._id;
+
+    let isSaved = false;
+    const existng = await readLater.findOne({
+        user: userId,
+        post: postId ,
+    })
+
+    if(existng) isSaved = true;
+
+    return res.json({isSaved});
+            
+    } catch(err){
+        return res.statu(500).json({message: "something went wrong"})
+    }
+
+}

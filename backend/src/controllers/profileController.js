@@ -8,22 +8,18 @@ export const getUserProfile = async (req, res) => {
         const viewer = req.user || null;
 
         const user = await User.findById(userId).select(
-            "name avatar bio createdAt"
+            "name avatar bio createdAt socials"
         );
 
         if(!user){
             return res.status(404).json({message: " User not found"});
         }
 
-        const posts = await PostModel.find({
+        const postsCount = await PostModel.countDocuments({
             author: userId,
             status: "public",
             isDeleted: false,
-        })
-        .sort({createdAt: -1})
-        .select(
-            "title excerpt coverImage views likesCount dislikesCount publishedAt"
-        );
+        });
 
 
         const followersCount  = await FollowModel.countDocuments({
@@ -44,7 +40,6 @@ export const getUserProfile = async (req, res) => {
 
 
 
-
         return res.status(200).json({
             user: {
                 _id: user._id,
@@ -52,10 +47,12 @@ export const getUserProfile = async (req, res) => {
                 avatar: user.avatar,
                 bio: user.bio,
                 joinedAt: user.createdAt,
+                socials: user.socials,
+                postsCount,
+                followersCount,
+                isFollowing,
             },
-            posts,
-            followersCount,
-            isFollowing,
+            
         })
 
 

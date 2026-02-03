@@ -5,15 +5,21 @@ import PostCardMenuPortal from "./UserPostCardMenuPortal";
 import EditPostModal from "./EditPostModal";
 import { formatRelativeTime } from "../../../utils/formatRelativeTime";
 import { useNavigate } from "react-router-dom";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { useToast } from "../../../context/ToastContext";
+import { deletePostApi } from "../../../api/postApi";
 
-export default function UserPostCard({ post }) {
+export default function UserPostCard({ post, onDelete }) {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [openDeleteConfModal, setOpenDeleteConfModal] = useState(false);
   const buttonRef = useRef(null);
   const navigate = useNavigate();
 
+  
+const toast = useToast();
   const apiUrl = "http://localhost:3456";
 
   const openMenu = (e) => {
@@ -36,6 +42,20 @@ export default function UserPostCard({ post }) {
     setMenuOpen(true);
   };
 
+
+
+  const handleConfirmDelete = async () => {
+  try {
+    const res = await deletePostApi(post._id);
+    toast.success(res.data.message);
+
+    onDelete(post._id);                 // 🔥 REMOVE FROM LIST
+    setOpenDeleteConfModal(false);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Delete failed");
+    setOpenDeleteConfModal(false);
+  }
+};
 
 
 
@@ -117,6 +137,10 @@ export default function UserPostCard({ post }) {
             setEditModalOpen(true)
             setMenuOpen(false);
           }}
+          postId={post._id}
+          onDelete={onDelete}
+          onClose = {() => setMenuOpen(false)}
+          setOpenDeleteConfModal={setOpenDeleteConfModal}
           />
       )}
 
@@ -124,6 +148,13 @@ export default function UserPostCard({ post }) {
        isOpen={editModalOpen}
        onClose={() => setEditModalOpen(false)}
        initialData={post}
+      />
+
+
+      <DeleteConfirmationModal
+      isOpen={openDeleteConfModal}
+      onClose={() => setOpenDeleteConfModal(false)}
+      onConfirm={handleConfirmDelete}
       />
 
     </>

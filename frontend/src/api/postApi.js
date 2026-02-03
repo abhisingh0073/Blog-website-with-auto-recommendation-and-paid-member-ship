@@ -9,6 +9,11 @@ export const createPost = (data) => {
 }
 
 
+export const deletePostApi = (postId) => {
+    return api.delete(`/post/delete/${postId}`, {withCredentials: true});
+}
+
+
 
 export default function recommendationPost(){
     const[posts, setPosts] = useState([]);

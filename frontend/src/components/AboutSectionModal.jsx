@@ -9,6 +9,8 @@ export default function AboutSectionModal({isOpen, onClose, user}){
        day: "numeric",
      });
 
+     console.log(user);
+
 
 
 return(
@@ -42,12 +44,23 @@ return(
       
       <h3 className="text-lg font-medium mb-3">Links</h3>
       <ul className="space-y-3 text-sm">
-        {user.socials.map((social) => 
-        <li>
-          <a href= {`${social.url}`} target="_blank" className="text-blue-400 hover:underline">
-            {socialplatform}
-          </a>
-        </li>)}
+        {user.socials?.length > 0 ? (
+           user.socials.map((social, index) => (
+          <li key={index}>
+            <a
+              href={social.url.startsWith("http") ? social.url : `https://${social.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
+              {social.platform}
+            </a>
+          </li>
+        ))
+      ) : (
+  <p className="text-white/50">No social links added</p>
+)}
+
       </ul>
 
       

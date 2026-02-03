@@ -1,27 +1,51 @@
-import { faBookBookmark, faList, faShare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookBookmark,
+  faBookmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { readLaterApi } from "../api/reactionApi";
+import { useToast } from "../context/ToastContext";
 
+export default function PostCardMenu({ postId, isSaved, onSavedChange, onClose }) {
+  const [saved, setSaved] = useState(isSaved);
+  const toast = useToast();
 
-export default function PostCardMenu(){
+  useEffect(() => {
+    setSaved(isSaved);
+  }, [isSaved])
 
-    return(
-        
-            <div className="absolute right-0 top-10 z-[100] w-52 bg-[#282828] text-white rounded-xl py-2 shadow-2xl border border-white/10 animate-in fade-in zoom-in duration-150">
-                <div className="absolute -top-3 left-0 right-0 h-3 bg-transparent" />
-              <MenuItem icon={faList} label= "Add to queue"/>
-              <MenuItem icon={faBookBookmark} label="Save to Library"/>
-              <MenuItem icon={faShare} label="Share" /> 
-            </div>
-       
-    )
+  const handleReadLater = async () => {
+    try {
+      const res = await readLaterApi(postId);
+      setSaved(!saved);
+      onSavedChange(!saved);
+      toast.success(res.data.message);
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  return (
+    <div className="w-52 bg-[#282828] text-white rounded-xl py-2 shadow-2xl">
+      <ActionButton
+        onClick={handleReadLater}
+        active={saved}
+        icon={saved ? faBookmark : faBookmark}
+        label={saved ? "Saved" : "Save to Library"}
+      />
+    </div>
+  );
 }
 
-function MenuItem({ icon, label}){
-    return(
-        <button className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors text-left">
-            <FontAwesomeIcon icon={icon} className="w-4 opacity-80"/>
-            <span>{label}</span>
-        </button>
-    )
-}
+const ActionButton = ({ onClick, active, icon, label }) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-3 text-sm
+      ${active ? "text-amber-500" : "text-white hover:bg-white/10"}`}
+  >
+    <FontAwesomeIcon icon={icon} />
+    <span>{label}</span>
+  </button>
+);

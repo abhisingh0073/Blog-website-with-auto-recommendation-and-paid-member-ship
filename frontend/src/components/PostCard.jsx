@@ -90,7 +90,7 @@ export default function PostCard({ post }) {
             <button
               ref={buttonRef}
               onClick={openMenu}
-              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/5"
+              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/5 cursor-pointer"
             >
               <FontAwesomeIcon icon={faEllipsisVertical} />
             </button>
@@ -100,7 +100,11 @@ export default function PostCard({ post }) {
       </div>
 
       {menuOpen && (
-        <PostCardMenuPortal position={menuPos} />
+        <PostCardMenuPortal 
+          position={menuPos}  
+          postId={post._id}
+          onClose={() => setMenuOpen(false)}
+          />
       )}
 
     </>

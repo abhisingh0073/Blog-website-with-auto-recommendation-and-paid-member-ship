@@ -7,7 +7,7 @@ import { upload } from "../middlewares/uploadMiddleware.js";
 
 postRoutes.post("/",authMiddleware,upload.single('coverImage'), createPost);
 postRoutes.put("/update/:postId", authMiddleware, updatePost);
-postRoutes.delete("/:postId", authMiddleware, deletePost);
+postRoutes.delete("/delete/:postId", authMiddleware, deletePost);
 postRoutes.get("/:postId", readPost);
 
 

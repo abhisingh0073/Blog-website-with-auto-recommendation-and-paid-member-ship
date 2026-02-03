@@ -11,3 +11,6 @@ export const likeApi = (postId, reaction) => {
 
 export const readLaterApi = (postId) => api.post(`/read-later/${postId}`,
     {withCredentials: true});
+
+
+export const isSavedApi = (postId) => api.get(`/read-later/${postId}`, {withCredentials: true});

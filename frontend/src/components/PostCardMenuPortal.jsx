@@ -1,8 +1,31 @@
 import { createPortal } from "react-dom";
 import PostCardMenu from "./PostCardMenu";
+import { isSavedApi } from "../api/reactionApi";
+import { useEffect, useState } from "react";
 
-export default function PostCardMenuPortal({ position }) {
+export default function PostCardMenuPortal({ position, postId, onClose }) {
   if (!position) return null;
+
+  const [saved, setSaved] = useState(false);
+
+   useEffect(() => {
+    let mounted = true;
+
+    const checkSaved = async () => {
+      try {
+        const res = await isSavedApi(postId);
+        if (mounted) setSaved(res.data.isSaved);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    checkSaved();
+    return () => (mounted = false);
+  }, [postId]);
+
+
 
   return createPortal(
     <div
@@ -15,7 +38,11 @@ export default function PostCardMenuPortal({ position }) {
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <PostCardMenu />
+      <PostCardMenu postId={postId}
+                    isSaved = {saved}
+                    onSavedChange={setSaved}
+                    onClose={onClose}
+      />
     </div>,
     document.body
   );
