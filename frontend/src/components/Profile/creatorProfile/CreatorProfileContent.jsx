@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { creatorPostApi } from "../../../api/creatorProfile";
 import { followApi } from "../../../api/reactionApi";
 import { useToast } from "../../../context/ToastContext";
+import { subscribeCreator } from "../../../api/userApi";
 
 export default function CreatorProfileContent({creator}){
 
@@ -17,7 +18,7 @@ export default function CreatorProfileContent({creator}){
 
    if(!creator){
     return(
-      <div>cretor is not found</div>
+      <div>creator is not found</div>
     )
    }
 
@@ -139,6 +140,9 @@ export default function CreatorProfileContent({creator}){
         >
           {following ? "Following" : "Follow"}
         </button>
+        <button
+         onClick={() => subscribeCreator(creator._id)}
+        >Join Members</button>
 
         </div>
       </div>

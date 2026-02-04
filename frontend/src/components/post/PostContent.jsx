@@ -76,7 +76,7 @@ const PostContent = ({post}) => {
       
       
       <h1 className="mb-4 text-4xl font-bold text-slate-900 tracking-tight leading-tight">
-        How to learn React in 40 days
+        {post.title}
       </h1>
 
       {/* Meta Information */}

@@ -79,7 +79,9 @@ export default function Navbar() {
           <FontAwesomeIcon icon={faPlus}/>Create
         </button>        
           <button className="text-xl cursor-pointer"><FontAwesomeIcon icon={faBell} /></button>
-         <img src= {user ? `${apiUrl}${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/709/709699.png"} alt="" className="w-8 h-8 border border-slate-950 rounded-full cursor-pointer" onClick={() => setShowProfileModal(!showProfileModal)} />
+         <img src= {user ? `${apiUrl}${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/709/709699.png"} alt="" 
+              className="w-10 h-10 rounded-full object-cover border border-slate-950 rounded-full cursor-pointer " 
+              onClick={() => setShowProfileModal(!showProfileModal)} />
         </>
       )}
  

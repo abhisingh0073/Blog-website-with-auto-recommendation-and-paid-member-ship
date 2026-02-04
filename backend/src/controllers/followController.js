@@ -1,4 +1,5 @@
 import FollowModel from "../models/FollowModel.js";
+import PostModel from "../models/PostModel.js";
 import User from "../models/User.js";
 import { updateUserInterests } from "../utils/updatesUserInterests.js";
 
@@ -49,7 +50,7 @@ export const toggleFollow = async (req, res) => {
         await existing.deleteOne();
 
 
-        return res.json({ message: "Ufollowed successfully"});
+        return res.json({ message: "Unfollowed successfully"});
 
     } catch (error) {
         console.error(error);

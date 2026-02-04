@@ -9,8 +9,13 @@ export const createPost = (data) => {
 }
 
 
-export const updatePostApi = (data, postId) => {
-    return api.put(`/post/${postId}`, data, {withCredentials: true});
+export const updatePostApi = (formData, postId) => {
+    return api.put(`/post/${postId}`, formData, {
+        withCredentials: true,
+    headers: {"Content-Type" : "multipart/form-data",
+
+    },
+    });
 }
 
 
