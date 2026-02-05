@@ -4,31 +4,33 @@ import { useEffect, useRef, useState } from "react";
 import { useToast } from "../../../context/ToastContext";
 import Editor from "../../Editor";
 import ButtonSpinner from "../../ui/ButtonSpinner";
-import { updatePostApi } from "../../../api/postApi";
+import { fetchPostToUpdate, updatePostApi } from "../../../api/postApi";
+import Tiptap from "../../Editor";
 
 
 
 
 
-export default function EditPostModal({ isOpen, onClose, initialData, onSave }) {
+export default function EditPostModal({ isOpen, onClose, postId, onSave }) {
     if (!isOpen) return null;
     const toast = useToast();
     const [loading, setLoading] = useState(false);
+    const [post ,setPost ] = useState(null);
 
     
     const apiUrl = "http://localhost:3456";
 
     const imageRef = useRef(null);
-    const [coverImage, setCoverImage] = useState(`${apiUrl}${initialData.coverImage}`);
+    const [coverImage, setCoverImage] = useState(``);
     const [coverFile, setCoverFile] = useState(null);
     const [postData, setPostData] = useState({
-      title: initialData.title || "",
-      content: initialData.content || "",
-      tags: initialData.tags || "",
-      status: initialData.status || "public",
-      category: initialData.category || "",
+      title: "",
+      content: "",
+      tags:  "",
+      status: "public",
+      category: "",
       excerpt: "",
-      isMembersOnly: initialData.isMembersOnly ?? false,
+      isMembersOnly: false,
     });
 
     const handleSelect = (e) => {
@@ -48,13 +50,15 @@ export default function EditPostModal({ isOpen, onClose, initialData, onSave }) 
 
 
     const handleChange = (e) => {
-      setPostData({...postData, [e.target.name]: e.target.value})
+      setPostData((prev) => ({...prev, [e.target.name]: e.target.value}))
     }
 
 
   
     const handleSubmit = async(e) => {
       e.preventDefault();
+
+      console.log(postData);
 
       if(!postData.title || !postData.content){
         alert("Title and content are required");
@@ -79,7 +83,7 @@ export default function EditPostModal({ isOpen, onClose, initialData, onSave }) 
           formData.append("coverImage", coverFile);
         }
 
-        const res = await updatePostApi(formData, initialData._id) ;
+        const res = await updatePostApi(formData, postId) ;
 
         toast.success(res.data.message);
         setLoading(false);
@@ -94,12 +98,51 @@ export default function EditPostModal({ isOpen, onClose, initialData, onSave }) 
     }
 
 useEffect(() => {
-  return () => {
-    if (coverImage?.startsWith("blob:")) {
-      URL.revokeObjectURL(coverImage);
+
+  if(!postId || !isOpen) return;
+
+  const loadPost = async () => {
+    try{
+      const res = await fetchPostToUpdate(postId);
+      setPost(res.data.post);
+    } catch(err){
+      toast.error(err.response.data.message || "Failed to load post");
     }
-  };
-}, [coverImage]);
+  }
+
+  loadPost();
+}, [postId, isOpen]);
+
+
+// useEffect(() => {
+//   return () => {
+//     if (coverImage?.startsWith("blob:")) {
+//       URL.revokeObjectURL(coverImage);
+//     }
+//   };
+// }, [coverImage]);
+
+
+
+useEffect(() => {
+  if(post){
+    setPostData({
+      title: post.title || "",
+      content: post.content || "",
+      tags: post.tags || "",
+      status: post.status || "public",
+      category: post.category || "",
+      excerpt: post.excerpt || "",
+      isMembersOnly: post.isMembersOnly,
+    });
+
+    if(post.coverImage){
+      setCoverImage(`${apiUrl}${post.coverImage}`)
+    }
+  }
+}, [post]);
+
+
 
 
   return (
@@ -117,13 +160,18 @@ useEffect(() => {
 
                 {/* Editor */}
                 <div className="flex-1 h-screen rounded-lg text-black">
-                  <Editor
-  key={initialData._id}
-  value={postData.content}
-  onChange={(html) =>
-    setPostData({ ...postData, content: html })
-  }
+                  {/* <Editor
+                    value={postData.content}
+                     onChange={(html) =>
+                     setPostData((prev) =>( {...prev, content: html}))
+                    }
+                   /> */}
+
+                   <Tiptap
+  content={postData.content}
+  onChange={(html) => setPostData(prev => ({ ...prev, content: html }))}
 />
+
 
                 </div>
                  
@@ -136,7 +184,7 @@ useEffect(() => {
         {/* section 2 */}
         <div className="w-[20%] bg-white">
 
-            {/* preview and status */}
+            
            <div className="flex gap-3 m-4">
               <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200 font-medium text-slate-700 shadow-sm">
                 <FontAwesomeIcon icon={faEye} className="text-slate-600" />
@@ -227,6 +275,7 @@ useEffect(() => {
                   <input
                     type="radio"
                     name="isMembersOnly"
+                    // value={true}
                     checked={postData.isMembersOnly === true}
                     onChange={() =>
                       setPostData({ ...postData, isMembersOnly: true })
@@ -239,6 +288,7 @@ useEffect(() => {
                   <input
                     type="radio"
                     name="isMembersOnly"
+                    // value={false}
                     checked={postData.isMembersOnly === false}
                     onChange={() =>
                       setPostData({ ...postData, isMembersOnly: false })

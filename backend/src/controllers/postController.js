@@ -7,6 +7,7 @@ import { fstat } from "fs";
 import FollowModel from "../models/FollowModel.js";
 import MembershipModel from "../models/MembershipModel.js";
 import mongoose from "mongoose";
+import PostModel from "../models/PostModel.js";
 
 
 export async function createPost(req, res){
@@ -107,7 +108,7 @@ export async function updatePost(req, res){
         if(excerpt !== undefined) post.excerpt = excerpt;
         if(category) post.category = category;
         if(coverImage) post.coverImage = coverImage;
-        if(typeof isMembersOnly === "boolean") post.isMembersOnly = isMembersOnly;
+        if(isMembersOnly) post.isMembersOnly = isMembersOnly;
 
         if(tags){
             post.tags = Array.isArray(tags) ? tags : tags.split(",").map(tag => tag.trim());
@@ -310,5 +311,38 @@ export async function readPost(req, res) {
         console.error(error);
         return res.status(500).json({message: "Something went Wrong"})
     }
+}
+
+
+export async function fetchPostToUpdate(req, res){
+
+    try{
+         const userId = req.user._id;
+    const { postId } = req.params;
+    
+
+    if(!mongoose.Types.ObjectId.isValid(postId)){
+        return res.status(400).json({message: "Invalid post id"});
+    }
+
+    const post = await PostModel.findById(postId);
+
+    if(!post || post.isDeleted){
+        return res.status(404).json({ message: "Post not found" });
+    }
+
+    if(post.author.toString() !== userId.toString() ){
+        return res.status(401).json({message: "Something went wrong"});
+    }
+
+
+    return res.status(201).json({post});
+
+
+    }catch(err){
+        return res.status(500).json({message: "Something went wrong"})
+    }
+
+   
 }
 

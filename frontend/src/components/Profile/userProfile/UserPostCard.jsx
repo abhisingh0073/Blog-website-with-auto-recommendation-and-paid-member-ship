@@ -160,7 +160,7 @@ const toast = useToast();
       <EditPostModal
        isOpen={editModalOpen}
        onClose={() => setEditModalOpen(false)}
-       initialData={post}
+       postId={post._id}
       />
 
 

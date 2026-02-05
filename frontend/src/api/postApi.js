@@ -25,6 +25,12 @@ export const deletePostApi = (postId) => {
 
 
 
+export const fetchPostToUpdate = (postId) => {
+    return api.get(`/post/update/${postId}`);
+}
+
+
+
 export default function recommendationPost(){
     const[posts, setPosts] = useState([]);
     const[loading, setLoading] = useState(true);
