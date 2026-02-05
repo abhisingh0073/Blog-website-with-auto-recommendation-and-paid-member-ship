@@ -15,6 +15,7 @@ import { formatRelativeTime } from "../../utils/formatRelativeTime";
 import { useToast } from "../../context/ToastContext";
 import { followApi, likeApi, readLaterApi } from "../../api/reactionApi";
 import { useNavigate } from "react-router-dom";
+import { SubscriptionModal } from "../SubscriptionModal";
 
 
 
@@ -27,6 +28,8 @@ export default function PostRightSideBar({post , reaction, user}) {
 
   const [likeCount, setLikeCount] = useState(post.likesCount);
   const [dislikeCount, setDislikeCount] = useState(post.dislikesCount);
+  const [subscriptionModal, setSubscriptionModal] = useState(false);
+  const [membershipJoin , setMembershipJoin] = useState(reaction.membershipJoin);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -35,10 +38,6 @@ export default function PostRightSideBar({post , reaction, user}) {
 
 
   const toggleFollow = async () => {
-
-    // if(!user){
-    //   toast.error("Login to Follow")
-    // }else{
       
       try{
          const res = await followApi(post.author._id);
@@ -49,9 +48,7 @@ export default function PostRightSideBar({post , reaction, user}) {
       }catch(err){
           toast.error(err.response.data.message);  
       }
-    // }
-    
-    
+
     
   };
 
@@ -103,6 +100,7 @@ export default function PostRightSideBar({post , reaction, user}) {
 
 
   return (
+    <>
     <aside className="sticky top-0 space-y-6 w-full max-w-[300px]">
       {/* Author Card */}
       <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
@@ -136,6 +134,10 @@ export default function PostRightSideBar({post , reaction, user}) {
         >
           {following ? "Following" : "Follow"}
         </button>
+        <button
+          onClick={() => setSubscriptionModal(true)}
+          className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all bg-green-600 text-white cursor-pointer mt-2 hover:bg-green-500"
+        >{membershipJoin ? "Already Joined": "Join Subscription"}</button>
       </div>
 
       {/* Actions Card */}
@@ -198,9 +200,9 @@ export default function PostRightSideBar({post , reaction, user}) {
 
   <div className="h-px bg-slate-100 mx-4" />
 
-  {/* Add Comment */}
+
   <div className="flex gap-3 px-4 py-4">
-    {/* Avatar */}
+   
 
     {user && (
       <>
@@ -210,7 +212,7 @@ export default function PostRightSideBar({post , reaction, user}) {
       className="w-10 h-10 rounded-full object-cover"
     />
 
-    {/* Input */}
+
     <div className="flex-1">
       <textarea
         rows={2}
@@ -228,14 +230,22 @@ export default function PostRightSideBar({post , reaction, user}) {
       </div>
     </div>     
       </>
-
-
     )}
 
   </div>
 </div>
 
-    </aside>
+    </aside>    
+    <SubscriptionModal
+    isOpen={subscriptionModal}
+    onClose = {() => setSubscriptionModal(false)}
+    creatorId = {post.author._id}
+    />    
+    
+    </>
+
+
+    
   );
 }
 

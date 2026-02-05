@@ -5,6 +5,8 @@ import ReadLaterModel from "../models/ReadLaterModel.js";
 import ReadPostModel from "../models/ReadPostModel.js";
 import { fstat } from "fs";
 import FollowModel from "../models/FollowModel.js";
+import MembershipModel from "../models/MembershipModel.js";
+import mongoose from "mongoose";
 
 
 export async function createPost(req, res){
@@ -177,12 +179,41 @@ export async function readPost(req, res) {
 
     try{
         const { postId } = req.params;
+        if(!mongoose.Types.ObjectId.isValid(postId)){
+            return res.status(400).json({message: "Post not found"});
+        }
+
+
         const user = req.user || null;
+        let membershipJoin = false;
 
         const post = await Post.findById(postId).populate("author", "name avatar");
         if(!post || post.isDeleted || post.status != "public"){
             return res.status(404).json({ message: "Post not found"});
         }
+
+
+        // checking membership if post is only for membership
+        if(post.isMembersOnly){
+            if(!user){
+                return res.status(401).json({message: "Login required. This post is for members only"})
+            }
+
+            if(user._id.toString() !== post.author._id.toString()){
+                const membership = await MembershipModel.findOne({
+                    user: user._id,
+                    creator: post.author._id,
+                })
+                if(!membership){
+                    return res.status(403).json({ message: "You need to subscribe to access this post" });
+                }
+                membershipJoin = true;
+
+            }
+
+        }
+
+
 
         post.views += 1;
         await post.save();
@@ -235,6 +266,15 @@ export async function readPost(req, res) {
             if(followData){
                 following=true;
             }
+
+            
+            // const membership = await MembershipModel.findOne({
+            //     user: user._id,
+            //     creator: post.author._id,
+            // });
+            // if(membership) {
+            //     membershipJoin = true;
+            // }
         }
 
         return res.status(200).json({
@@ -256,6 +296,7 @@ export async function readPost(req, res) {
                  readProgress,
                  following,
                  totalFollower,
+                 membershipJoin,
             },
             user: user ? {
                 _id: user._id,

@@ -9,6 +9,7 @@ import { creatorPostApi } from "../../../api/creatorProfile";
 import { followApi } from "../../../api/reactionApi";
 import { useToast } from "../../../context/ToastContext";
 import { subscribeCreator } from "../../../api/userApi";
+import { SubscriptionModal } from "../../SubscriptionModal";
 
 export default function CreatorProfileContent({creator}){
 
@@ -18,6 +19,8 @@ export default function CreatorProfileContent({creator}){
 
    if(!creator){
     return(
+
+      
       <div>creator is not found</div>
     )
    }
@@ -27,6 +30,7 @@ export default function CreatorProfileContent({creator}){
     const[following, setFollowing] = useState(creator.isFollowing);
     const[tabData, setTabData] = useState([]);
     const [tabLoading, setTabLoading] = useState(false);
+    const [subscriptionModal, setSubscriptionModal] = useState(false);
 
     const tabs = ["Posts", "Videos"];
     const [activeTab, setActiveTab] = useState("Posts");
@@ -88,6 +92,7 @@ export default function CreatorProfileContent({creator}){
        <div className="max-w-6xl mx-auto px-4 pt-6">
 
 
+
          {/* cover imagr */}
         <div className="relative aspect-[6/1] w-full rounded-2xl overflow-hidden ">
             {creator.coverImage ? (<img 
@@ -125,7 +130,7 @@ export default function CreatorProfileContent({creator}){
           <button 
           onClick={() => setIsAboutOpen(!aboutOpen)}
           className="text-sm text-slate-400 cursor-pointer hover:text-indigo-400 transition block text-left">
-           <p>{creator.bio}</p>
+           <p className="line-clamp-1">{creator.bio}</p>
            <span>more</span>
          </button>
         
@@ -141,8 +146,9 @@ export default function CreatorProfileContent({creator}){
           {following ? "Following" : "Follow"}
         </button>
         <button
-         onClick={() => subscribeCreator(creator._id)}
-        >Join Members</button>
+         onClick={() => setSubscriptionModal(true)}
+         className="inline-flex items-center justify-center px-8 py-2.5 rounded-xl bg-green-600 cursor-pointer font-semibold text-sm hover:bg-green-500 transition-all"
+        >{creator.membershipJoin ? "Already Joined" : "Join Membership"}</button>
 
         </div>
       </div>
@@ -191,6 +197,14 @@ export default function CreatorProfileContent({creator}){
       onClose={() => setIsAboutOpen(false)}
       user={creator}
     />
+
+    
+    <SubscriptionModal
+     isOpen={subscriptionModal}
+     onClose={() => setSubscriptionModal(false)}
+     creatorId={creator._id}
+    />
+
     </>
     )
 

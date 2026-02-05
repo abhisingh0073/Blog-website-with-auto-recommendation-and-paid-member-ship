@@ -6,7 +6,7 @@ export const getRecommendations = async (req, res) => {
         const user = req.user || null;
         let results = [];
 
-        const postSelection = "coverImage title author views publishedAt"
+        const postSelection = "coverImage title author views publishedAt isMembersOnly"
 
         if(user && user.interests?.length){
             const topTags = user.interests

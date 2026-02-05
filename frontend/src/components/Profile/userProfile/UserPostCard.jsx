@@ -127,6 +127,19 @@ const toast = useToast();
         </div>
 
         <p className={`absolute top-0 m-2 p-1 font-bold text-xs rounded-lg ${post.status === "private" ? "text-red-700 bg-slate-500/50" :" bg-slate-500/30"} `}>{post.status}</p>
+          {post.isMembersOnly && (
+            <span className="
+                   absolute right-2 bottom-2
+                   rounded-md
+                   bg-black/60
+                   px-2 py-1
+                   text-xs font-semibold
+                   text-green-400
+                   backdrop-blur-sm
+                 ">
+                   Members only
+            </span>              
+            )}
 
       </div>
 

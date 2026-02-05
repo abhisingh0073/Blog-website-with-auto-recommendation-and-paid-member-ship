@@ -65,7 +65,7 @@ export default function PostCard({ post }) {
           <div className="flex-shrink-0 pt-1">
             <img
               src={`http://localhost:3456${post.author?.avatar}` || "https://cdn-icons-png.flaticon.com/512/709/709699.png"}
-              className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all"
+              className="w-9 h-9 rounded-full bg-slate-100 hover:ring-2 ring-slate-200 transition-all object-cover"
               onClick={(e) =>{ 
                  e.stopPropagation();
                 navigate(`/c/${post.author._id}`)}}
@@ -94,7 +94,21 @@ export default function PostCard({ post }) {
             >
               <FontAwesomeIcon icon={faEllipsisVertical} />
             </button>
+            {post.isMembersOnly && (
+            <span className="
+                   absolute right-2 bottom-2
+                   rounded-md
+                   bg-black/60
+                   px-2 py-1
+                   text-xs font-semibold
+                   text-green-400
+                   backdrop-blur-sm
+                 ">
+                   Members only
+            </span>              
+            )}
 
+                 
           </div>
         </div>
       </div>

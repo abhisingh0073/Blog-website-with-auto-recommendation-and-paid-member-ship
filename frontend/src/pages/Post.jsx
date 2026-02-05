@@ -26,7 +26,6 @@ export default function Post() {
       try{
         const res = await api.get(`/post/${postId}`,
          { withCredentials: true});
-console.log(res);
 
          setPost(res.data.post);
          setSideBarInfo(res.data.sidebarinfo);

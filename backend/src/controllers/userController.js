@@ -161,7 +161,7 @@ async function updateProfile(req, res){
 
 async function fetchUserPost(req, res){
 
-    const postSelection = "_id coverImage title author views publishedAt createdAt status"
+    const postSelection = "_id coverImage title author views publishedAt createdAt status isMembersOnly"
     const user = req.user;
 
     const posts = await PostModel.find({author: user._id, isDeleted: false})

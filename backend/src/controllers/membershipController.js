@@ -9,8 +9,13 @@ console.log("USER:", req.user);
 
   try {
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, creatorId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, creatorId, month } = req.body;
     const userId = req.user._id; 
+
+    let day;
+    if(month===1) day=30;
+    if(month===3) day=90;
+    if(month===6) day=180;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -38,20 +43,20 @@ console.log("USER:", req.user);
         let baseDate = existing.expiresAt > now ? existing.expiresAt : now;
 
         let newExpiresAt = new Date(baseDate);
-        newExpiresAt.setDate(newExpiresAt.getDate() + 30);
+        newExpiresAt.setDate(newExpiresAt.getDate() + day);
 
         existing.expiresAt = newExpiresAt;
         await existing.save();
 
         return res.status(200).json({
-         message: "Membership renewed successfully",
+         message: `Membership renewed successfully for next ${month} month`,
          membership: existing,
       });
     }
 
    
     const expiresAt = new Date(now);
-    expiresAt.setDate(expiresAt.getDate() + 30);
+    expiresAt.setDate(expiresAt.getDate() + day);
 
     const membership = await MembershipModel.create({
       user: userId,
@@ -60,7 +65,7 @@ console.log("USER:", req.user);
     });
 
     return res.status(201).json({
-      message: "Membership activated successfully",
+      message: `Membership activated successfully for ${month} month`,
       membership,
     });
 
@@ -78,7 +83,7 @@ console.log("USER:", req.user);
 export const createMembershipOrder = async (req, res) => {
 
     try{
-        const { creatorId } = req.body;
+        const { creatorId, month } = req.body;
         const userId = req.user._id;
 
 
@@ -87,8 +92,15 @@ export const createMembershipOrder = async (req, res) => {
           return res.status(400).json({ message: "You cannot subscribe to yourself" });
         }
 
+        let amount;
 
-        const amount = 1 * 100;
+           if(month===1) amount = 199 *100;
+           else if(month===3) amount = 480 * 100;
+           else if(month===6) amount = 780 * 100;
+           else return res.status(500).json({message: "Something went wrong"})
+
+
+        
 
         const order = await razorpay.orders.create({
             amount,

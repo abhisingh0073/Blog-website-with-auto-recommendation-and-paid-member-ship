@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import FollowModel from "../models/FollowModel.js";
 import PostModel from "../models/PostModel.js";
+import MembershipModel from "../models/MembershipModel.js";
 
 export const getUserProfile = async (req, res) => {
     try{
@@ -69,6 +70,7 @@ export const getCreatorProfile = async (req, res) => {
     const user = req.user || null;
     const {creatorId} = req.params;
     let following = false;
+    let membershipJoin = false;
     
 
     try{
@@ -94,8 +96,20 @@ export const getCreatorProfile = async (req, res) => {
         });
         if(isFollowing){
             following= true;
-        }            
+        }  
+        
+        const membership = await MembershipModel.findOne({
+            user: user._id,
+            creator: creatorId,
+        });
+        if(membership){
+            membershipJoin = true;
         }
+
+        }
+
+        
+
 
 
         return res.json({
@@ -110,6 +124,7 @@ export const getCreatorProfile = async (req, res) => {
                 socials: creator.socials,
                 createdAt: creator.createdAt,
                 postCount: postCount,
+                membershipJoin,
             },
 
         });
