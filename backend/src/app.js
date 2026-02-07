@@ -18,6 +18,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import membershipRouter from './routes/membershipRoutes.js';
+import searchRoute from './routes/searchRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,6 +64,7 @@ app.use("/recommendations", recommendationsRouter)
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 app.use("/membership", membershipRouter);
+app.use("/search", searchRoute);
 
 
 

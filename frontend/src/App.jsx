@@ -36,6 +36,7 @@ import AppLayout from "./layouts/AppLayOut";
 import { useAuth } from "./context/AuthContext";
 import UserProfile from "./pages/UserProfile";
 import CreatorProfile from "./pages/CreatorProfile";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
         <Route path={"/p/:postId"} element={<Post />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/c/:creatorId" element={<CreatorProfile/>}/>
+        <Route path="/search" element={<SearchPage/>}/>
       </Route>
     </Routes>
   );
