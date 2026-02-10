@@ -63,7 +63,7 @@ const LoginModal = ({ isOpen, onClose, onSwitch }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onMouseDown={onClose}>
-      {/* Modal Container */}
+
       <div className="relative w-full max-w-md p-8 mx-4 bg-slate-100 rounded-2xl shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >

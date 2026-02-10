@@ -23,9 +23,6 @@ import searchRoute from './routes/searchRoutes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ serve uploads folder
-
-
 
 const app = express();
 

@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')).render(
         {/* <LoaderProvider> */}
           <ToastProvider>
             <AuthProvider>
-              <App />
+              <App/>
             </AuthProvider>
           </ToastProvider>
         {/* </LoaderProvider> */}

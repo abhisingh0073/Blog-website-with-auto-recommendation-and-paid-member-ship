@@ -1,6 +1,7 @@
 import { useEffect, createContext, useState } from "react";
 import api from "../api/api";
 import { useContext } from "react";
+import socket from "../socket";
 
 
 const AuthContext = createContext(null);
@@ -24,6 +25,18 @@ export const AuthProvider = ({children}) => {
         checkAuth();
        
     }, []);
+
+
+
+
+
+    useEffect(() => {
+        if(user?._id){
+            socket.emit("join", user._id)
+        }
+    }, [user]);
+
+
 
     const value = {
         user,

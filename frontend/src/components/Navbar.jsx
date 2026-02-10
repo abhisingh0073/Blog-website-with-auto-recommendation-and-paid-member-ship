@@ -11,6 +11,9 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "./Search/useDebounce";
 import { suggestionsApi } from "../api/searchApi";
+import socket from "../socket";
+import { useToast } from "../context/ToastContext";
+
 
 export default function Navbar() {
 
@@ -24,10 +27,10 @@ export default function Navbar() {
   const [suggestions, setSuggestions] = useState([]);
   const debouncedQuery = useDebounce(query, 300);
 
-
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const apiUrl = "http://localhost:3456";
+  const toast = useToast();
 
   const openLogin = () => {
     setShowLogin(true);
@@ -61,6 +64,40 @@ export default function Navbar() {
         })
 
   }, [debouncedQuery]);
+
+
+//   useEffect(() => {
+
+//     fetchNotifications().then((res) => {
+//       setNotifications(res.data.notifications);
+//       setUnread(res.data.unreadCount);
+//     });
+
+//     if(user?._id){
+//       socket.emit("join", user._id);
+//     }
+//     socket.on("new-notification", (notif) => {
+//     setNotifications((prev) => [notif, ...prev]);
+//     setUnread((prev) => prev + 1);
+//    });
+
+//      return () => {
+//     socket.off("new-notification");
+//    };
+// }, [user]);
+
+useEffect(() => {
+  socket.on("notification", (data) => {
+    console.log("it is notification server is running");
+    console.log("New notification:", data);
+    toast.success(data.message);
+  });
+
+  return () => {
+    socket.off("notification");
+  }
+}, []);
+
 
 
 

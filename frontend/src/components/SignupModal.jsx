@@ -57,6 +57,7 @@ const SignupModal = ({isOpen, onClose, onSwitch}) => {
         onClose();
         toast.success(res.data.message);
         setLoading(false);
+        window.location.reload();
         
         
       } catch(err) {

@@ -1,14 +1,23 @@
 // import dotenv from "dotenv";
 import app from "./app.js";
-import connectDB from "./config/db.js"
-// import { startMembershipCleanupJob } from "./jobs/cleanupMemberships.js";
+import connectDB from "./config/db.js";
+import http from "http";
+import { initSocket } from "./config/serverSocket.js";
 
-// dotenv.config();
+
 connectDB();
+
 
 const PORT = process.env.PORT || 5000;
 
-// startMembershipCleanupJob();
+const server = http.createServer(app);
+initSocket(server);
+server.listen(3456, () => {
+    console.log("server is running on 3456");
+})
+
+
+
 
 app.listen(PORT, () => {console.log(`server is running on port ${PORT}`)});
 

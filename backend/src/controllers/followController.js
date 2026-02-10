@@ -2,11 +2,13 @@ import FollowModel from "../models/FollowModel.js";
 import PostModel from "../models/PostModel.js";
 import User from "../models/User.js";
 import { updateUserInterests } from "../utils/updatesUserInterests.js";
+import { getIO } from "../config/serverSocket.js";
 
 export const toggleFollow = async (req, res) => {
     try{
         const followerId = req.user._id;
         const {userIdToFollow } = req.params;
+        const io = getIO();
 
         if(followerId.toString() === userIdToFollow.toString()){
             return res.status(400).json({message: "You cannot follow yourself"});
@@ -22,11 +24,24 @@ export const toggleFollow = async (req, res) => {
             following: userIdToFollow,
         });
 
+        // console.log(req.user);
+
         if(!existing){
             await FollowModel.create({
                 follower: followerId,
                 following: userIdToFollow,
             });
+
+            //sending notification of follower
+
+            const notification = await Notification
+            io.to(userIdToFollow.toString()).emit("notification", {
+                type: "follow",
+                user: userIdToFollow,
+                sender: followerId,
+                profile: req.user.avatar,
+                message: `${req.user.name} followed you`,
+            })
 
 
             //sendind interest 
