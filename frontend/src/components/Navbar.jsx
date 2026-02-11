@@ -13,6 +13,9 @@ import useDebounce from "./Search/useDebounce";
 import { suggestionsApi } from "../api/searchApi";
 import socket from "../socket";
 import { useToast } from "../context/ToastContext";
+import { notificationApi } from "../api/notificationApi";
+import NotificationModal from "./ui/NotificationModal";
+import api from "../api/api";
 
 
 export default function Navbar() {
@@ -26,6 +29,9 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const debouncedQuery = useDebounce(query, 300);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -66,30 +72,60 @@ export default function Navbar() {
   }, [debouncedQuery]);
 
 
-//   useEffect(() => {
 
-//     fetchNotifications().then((res) => {
-//       setNotifications(res.data.notifications);
-//       setUnread(res.data.unreadCount);
-//     });
+useEffect(() => {
+  const fetchNotification = async () => {
+    try{
+      const res = await notificationApi();
+      const list = Array.isArray(res.data.notifications) ? res.data.notifications : [];
+       setNotifications(list);
+       setUnreadCount(res.data.unreadCount);
 
-//     if(user?._id){
-//       socket.emit("join", user._id);
-//     }
-//     socket.on("new-notification", (notif) => {
-//     setNotifications((prev) => [notif, ...prev]);
-//     setUnread((prev) => prev + 1);
-//    });
+    } catch(err){
+      console.err("Failed to fetch notification", err);
+    }
 
-//      return () => {
-//     socket.off("new-notification");
-//    };
-// }, [user]);
+  }
+  
+  if(user?._id){
+     fetchNotification(); 
+     socket.emit("join", user._id);
+  }
+}, [user]);
+
+
+
+const handelOpenNotification = async () => {
+    setNotificationOpen(prev => !prev);
+
+    if(unreadCount > 0){
+      await api.put("/notification/read");
+
+      setUnreadCount(0);
+      // setNotifications(prev => 
+      //   prev.map(n => ({...n, isRead: true}))
+      // );
+    }
+  }
+
+
+
+
+
 
 useEffect(() => {
   socket.on("notification", (data) => {
     console.log("it is notification server is running");
     console.log("New notification:", data);
+
+    // setNotifications((prev) => [data, ...prev]);
+    setNotifications((prev) => {
+  const safePrev = Array.isArray(prev) ? prev : [];
+  return [data, ...safePrev];
+});
+
+    setUnreadCount((prev) => prev+1);
+
     toast.success(data.message);
   });
 
@@ -97,7 +133,6 @@ useEffect(() => {
     socket.off("notification");
   }
 }, []);
-
 
 
 
@@ -187,8 +222,17 @@ useEffect(() => {
             onClick={() => setShowCreate(true)}
         >
           <FontAwesomeIcon icon={faPlus}/>Create
-        </button>        
-          <button className="text-xl cursor-pointer"><FontAwesomeIcon icon={faBell} /></button>
+        </button> 
+
+          <button
+          onClick={handelOpenNotification} 
+          className="text-xl cursor-pointer relative">
+            { unreadCount>0 && (
+               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-sm px-1.5 rounded-full">{unreadCount}</span>
+            )}
+            <FontAwesomeIcon icon={faBell} />
+            </button>
+
          <img src= {user ? `${apiUrl}${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/709/709699.png"} alt="" 
               className="w-10 h-10 rounded-full object-cover border border-slate-950 rounded-full cursor-pointer " 
               onClick={() => setShowProfileModal(!showProfileModal)} />
@@ -223,6 +267,11 @@ useEffect(() => {
     onClose={() => setShowProfileModal(false)}
     user={user}
     />
+
+    <NotificationModal 
+    isOpen={notificationOpen}
+    onClose = {() => setNotificationOpen(false)}
+    notifications = {notifications}/>
   </>
     
 

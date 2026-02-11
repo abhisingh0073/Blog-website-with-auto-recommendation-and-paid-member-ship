@@ -3,6 +3,7 @@ import PostModel from "../models/PostModel.js";
 import User from "../models/User.js";
 import { updateUserInterests } from "../utils/updatesUserInterests.js";
 import { getIO } from "../config/serverSocket.js";
+import NotificationModal from "../models/NotificationModal.js";
 
 export const toggleFollow = async (req, res) => {
     try{
@@ -32,16 +33,20 @@ export const toggleFollow = async (req, res) => {
                 following: userIdToFollow,
             });
 
-            //sending notification of follower
 
-            const notification = await Notification
-            io.to(userIdToFollow.toString()).emit("notification", {
-                type: "follow",
+            //sending notification of follower
+            const notification = await NotificationModal.create({
                 user: userIdToFollow,
-                sender: followerId,
-                profile: req.user.avatar,
+                sender: req.user._id,
+                image: req.user.avatar,
+                type: "follow",
                 message: `${req.user.name} followed you`,
-            })
+                link: `/profile/${req.user._id}`,
+            });
+
+            // console.log(notification);
+
+            io.to(userIdToFollow.toString()).emit("notification", notification);
 
 
             //sendind interest 

@@ -1,42 +1,36 @@
 import mongoose from "mongoose";
-import refunds from "razorpay/dist/types/refunds";
 
-const notificationSchema = new mongoose.Schema({
-
+const notificationSchema = new mongoose.Schema(
+  {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-        index: true,
+      type: mongoose.Schema.Types.ObjectId, // receiver
+      ref: "User",
+      required: true,
     },
-
-    type:{
-        type: String,
-        enum: ["follow", "title", "comment", "membership", "post"],
-        required: true,
+    sender: {
+      type: mongoose.Schema.Types.ObjectId, // who triggered it
+      ref: "User",
     },
-
+    type: {
+      type: String, // "follow", "like", "comment", "membership"
+      required: true,
+    },
     message: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-
+    image: {
+      type: String,
+    },
     link: {
-        type: String,
+      type: String, // where to redirect on click
     },
-
     isRead: {
-        type: Boolean,
-        default: false,
-        index: true,
+      type: Boolean,
+      default: false,
     },
-
-    fromUser : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    },
-}, {timestamps: true});
-
-
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("Notification", notificationSchema);
