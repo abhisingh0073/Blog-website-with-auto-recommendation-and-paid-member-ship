@@ -41,7 +41,7 @@ export const toggleFollow = async (req, res) => {
                 image: req.user.avatar,
                 type: "follow",
                 message: `${req.user.name} followed you`,
-                link: `/profile/${req.user._id}`,
+                link: `/c/${req.user._id}`,
             });
 
             // console.log(notification);

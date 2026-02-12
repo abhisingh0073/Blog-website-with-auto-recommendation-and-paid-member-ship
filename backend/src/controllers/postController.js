@@ -8,6 +8,8 @@ import FollowModel from "../models/FollowModel.js";
 import MembershipModel from "../models/MembershipModel.js";
 import mongoose from "mongoose";
 import PostModel from "../models/PostModel.js";
+import NotificationModal from "../models/NotificationModal.js";
+import { getIO } from "../config/serverSocket.js";
 
 
 export async function createPost(req, res){
@@ -25,6 +27,7 @@ export async function createPost(req, res){
         const user = req.user;
 
         const slug = slugify(postTitle, { lower: true, strict: true });
+        const io = getIO();
         
 
         //calculate reading time
@@ -50,6 +53,37 @@ export async function createPost(req, res){
             publishedAt,
 
         });
+
+        const followers = await FollowModel.find({
+            following: req.user._id
+        }).select("follower");
+
+
+        if(followers.length>0){
+
+            const notification = followers.map(f => ({
+            user: f.follower,
+            sender:req.user._id,
+            image:req.file ? `/uploads/${user._id}/${req.file.filename}` : null, 
+            type: "post",
+            message:`${postTitle} : Uploaded by ${req.user.name}`,
+            link:`/p/${post._id}`,
+           }));
+
+           const savedNotification = await NotificationModal.insertMany(notification);
+
+
+           savedNotification.forEach((notif, index) => {
+               const followerId = followers[index].follower.toString();
+
+               io.to(followerId).emit("notification", notif);
+           })
+
+
+
+        }
+
+
 
         return res.status(201).json({
             message: "Post created successfully",

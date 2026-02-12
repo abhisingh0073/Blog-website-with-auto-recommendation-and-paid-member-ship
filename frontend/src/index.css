@@ -64,3 +64,17 @@
   font-weight: 600;
   margin: 1em 0 0.5em;
 }
+
+
+
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari */
+  }
+}
+
