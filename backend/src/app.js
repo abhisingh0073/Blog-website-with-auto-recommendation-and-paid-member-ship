@@ -20,6 +20,7 @@ import { fileURLToPath } from "url";
 import membershipRouter from './routes/membershipRoutes.js';
 import searchRoute from './routes/searchRoutes.js';
 import notifiactionRouter from './routes/notificationRoutes.js';
+import commentRouter from './routes/commentRouter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,7 @@ app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.use("/membership", membershipRouter);
 app.use("/search", searchRoute);
 app.use("/notification", notifiactionRouter);
+app.use("/comment", commentRouter);
 
 
 

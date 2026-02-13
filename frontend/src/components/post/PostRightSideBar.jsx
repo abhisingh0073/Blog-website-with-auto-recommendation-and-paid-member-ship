@@ -1,6 +1,7 @@
 import {
   faBookmark,
   faComment,
+  faHeart,
   faThumbsDown,
   faThumbsUp,
 } from "@fortawesome/free-regular-svg-icons";
@@ -16,6 +17,8 @@ import { useToast } from "../../context/ToastContext";
 import { followApi, likeApi, readLaterApi } from "../../api/reactionApi";
 import { useNavigate } from "react-router-dom";
 import { SubscriptionModal } from "../SubscriptionModal";
+import { commentLikeApi, getCommentApi, postCommentApi } from "../../api/commentApi";
+import { useEffect } from "react";
 
 
 
@@ -30,6 +33,10 @@ export default function PostRightSideBar({post , reaction, user}) {
   const [dislikeCount, setDislikeCount] = useState(post.dislikesCount);
   const [subscriptionModal, setSubscriptionModal] = useState(false);
   const [membershipJoin , setMembershipJoin] = useState(reaction.membershipJoin);
+  const [comments, setComments] = useState([]);
+  const [currentComment, setCurrentComment] = useState("");
+  const [commentLikeActive, setCommentLikeActive] = useState(false);
+  
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -99,10 +106,66 @@ export default function PostRightSideBar({post , reaction, user}) {
 
 
 
+  const handleCommentButton = async (e) => {
+    e.preventDefault();
+
+    if(!currentComment.trim()) return;
+
+    try{
+      const res = await postCommentApi(post._id, currentComment);
+      console.log(res + "this is after post");
+      setComments((prev) => [res.data.populatedComment, ...prev])
+      setCurrentComment("");
+      toast.success(res.data.message);
+
+    } catch(err){
+      toast.error(err.response.data.message || "Failed to post comment");
+    }
+  }
+
+
+  const handleCommentLike = async (commentId) => {
+
+    try{
+
+      await commentLikeApi(commentId);
+
+
+    } catch(err){
+      toast.err(err.response.data.message || "Something went Wrong")
+    }
+  }
+
+
+
+
+
+
+
+  useEffect(() => {
+   
+    const fetchComment = async () => {
+      try{
+        const resComment = await getCommentApi(post._id);
+        console.log(resComment);
+        setComments(resComment.data || []);      
+      
+      }catch(err){
+        toast.error(err.response.data.message || "Something went wrong to Comment");
+      }
+
+    }
+
+    fetchComment();
+
+  }, [post._id]);
+
+
+
   return (
     <>
     <aside className="sticky top-0 space-y-6 w-full max-w-[300px]">
-      {/* Author Card */}
+      
       <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
         <div className="flex flex-row gap-3 items-center">
            <img
@@ -125,7 +188,6 @@ export default function PostRightSideBar({post , reaction, user}) {
 
         {/* follow button */}
         <button
-          // disabled={!user || post.author._id === user._id}
           onClick={toggleFollow}
           className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-95
             ${following 
@@ -192,18 +254,16 @@ export default function PostRightSideBar({post , reaction, user}) {
 
 
 <div className="border border-slate-200 rounded-xl shadow-sm bg-white">
-  {/* Header */}
+  
   <div className="flex items-center gap-3 px-4 py-3 text-slate-600 text-sm font-medium">
     <FontAwesomeIcon icon={faComment} className="text-slate-400" />
-    <span>12 Comments</span>
+    <span>{comments.length} Comments</span>
   </div>
 
   <div className="h-px bg-slate-100 mx-4" />
 
-
-  <div className="flex gap-3 px-4 py-4">
-   
-
+   <form action="" onSubmit={handleCommentButton}>
+      <div className="flex gap-3 px-4 py-4">
     {user && (
       <>
      <img
@@ -215,13 +275,16 @@ export default function PostRightSideBar({post , reaction, user}) {
 
     <div className="flex-1">
       <textarea
+        value={currentComment}
         rows={2}
         placeholder="Add a comment..."
+        onChange={(e) => setCurrentComment(e.target.value)}
         className="w-full resize-none text-sm outline-none border-b border-slate-300 focus:border-indigo-500 placeholder-slate-400 pb-1"
       />
 
       <div className="flex justify-end mt-2">
         <button
+        type="submit"
           className="px-4 py-1.5 text-sm font-medium rounded-lg
                      bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
@@ -232,7 +295,50 @@ export default function PostRightSideBar({post , reaction, user}) {
       </>
     )}
 
-  </div>
+      </div>
+   </form>
+
+  
+
+
+   <div className="max-h-80 overflow-y-auto no-scrollbar">
+  {comments.map((c) => (
+    <div
+      key={c._id}
+      className="flex gap-3 px-4 py-3 border-b border-slate-100 last:border-b-0"
+    >
+     
+      <img
+        src={`${apiUrl}${c.user.avatar}`}
+        alt={c.user.name}
+        className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+      />
+
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-slate-800">
+            {c.user.name}
+          </p>
+          <span className="text-xs text-slate-400">{formatRelativeTime(c.createdAt).toString()}</span>
+        </div>
+
+        <p className="text-sm text-slate-700 leading-relaxed mt-0.5">
+          {c.comment}
+        </p>
+      </div>
+
+      
+      <button 
+      onClick={handleCommentLike(c._id)}
+      className="text-slate-400 hover:text-rose-500 transition">
+        <FontAwesomeIcon icon={faHeart} />
+      </button> 
+     
+    </div>
+  ))}
+</div>
+
+
 </div>
 
     </aside>    

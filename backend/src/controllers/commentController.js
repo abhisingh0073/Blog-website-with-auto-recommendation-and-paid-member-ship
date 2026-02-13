@@ -1,4 +1,5 @@
-import CommentModal from "../models/CommentModal";
+import { response } from "express";
+import CommentModal from "../models/CommentModal.js";
 
 
 export const createComment = async (req, res) => {
@@ -6,26 +7,29 @@ export const createComment = async (req, res) => {
     try{
         const user = req.user;
 
+
         if(!user){
             return res.status(400).json({message: "Something went wrong"});
         }
 
-        const { comment, postId} = req.body;
+        const {currentComment, postId} = req.body;
 
-        if(!comment || !postId){
+        // console.log(currentComment);
+
+        if(!currentComment || !postId){
             return res.status(400).json({message: "Something went wrong"})
         }
 
         const newComment = await CommentModal.create({
           post: postId,
           user: user._id,
-          comment: comment,
+          comment: currentComment,
       });
 
       const populatedComment = await newComment.populate("user", "name avatar")
+// console.log(populatedComment);
 
-
-      return res.status(201).json({populatedComment});
+      return res.status(201).json({populatedComment, message: "Commented SuccessFully"});
 
     }catch(err){
         return res.status(500).json({message: "something went wrong"})
@@ -59,7 +63,6 @@ export const getComment = async (req, res) => {
         return res.status(500).json({message: "Something went wrong"});
     }
 
-
 }
 
 
@@ -89,5 +92,36 @@ export const deleteComment = async (req, res) => {
     }catch(err){
         console.log(err);
         return res.status(500).json({message: "Something went wrong"})
+    }
+}
+
+
+
+
+export const likeComment = async (req, res) => {
+
+    try{
+        const { commentId } = req.params;
+        const user = req.user;
+
+        const comment = await CommentModal.findById(commentId);
+        if(!comment) return res.status(401).json({message: "Something went wrong"});
+
+        const isUserLike = comment.likes.some((id) => id.toString() === user._id.toString());
+
+        if(isUserLike){
+            comment.likes = comment.likes.filter((id) => id.toString() !== user._Id.toString());
+        } else{
+            comment.likes.push(user._id);
+        }
+
+
+        await comment.save();
+        response.status(200).json({
+            message: isUserLike ? "like removed" : "like comment"
+        });
+
+    } catch(err){
+        res.status(500).json({message: "Server error"});
     }
 }
