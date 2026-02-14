@@ -124,15 +124,21 @@ export default function PostRightSideBar({post , reaction, user}) {
   }
 
 
-  const handleCommentLike = async (commentId) => {
+  const handleCommentLike = async (commentId, index) => {
 
     try{
+      const { likesCount, isLikedByMe } = await commentLikeApi(commentId);
+      setComments(prev => {
+        const copy = [...prev];
+        copy[index] = {
+          ...copy[index], likesCount, isLikedByMe
+        }
 
-      await commentLikeApi(commentId);
-
+        return copy;
+      })
 
     } catch(err){
-      toast.err(err.response.data.message || "Something went Wrong")
+      toast.error(err.response.data.message || "Something went Wrong")
     }
   }
 
@@ -147,8 +153,7 @@ export default function PostRightSideBar({post , reaction, user}) {
     const fetchComment = async () => {
       try{
         const resComment = await getCommentApi(post._id);
-        console.log(resComment);
-        setComments(resComment.data || []);      
+        setComments(resComment.data.comments || []);      
       
       }catch(err){
         toast.error(err.response.data.message || "Something went wrong to Comment");
@@ -327,13 +332,16 @@ export default function PostRightSideBar({post , reaction, user}) {
         </p>
       </div>
 
-      
-      <button 
-      onClick={handleCommentLike(c._id)}
-      className="text-slate-400 hover:text-rose-500 transition">
-        <FontAwesomeIcon icon={faHeart} />
-      </button> 
+      <div className="flex flex-col text-center">
+        <button 
+          onClick={handleCommentLike(c._id, index)}
+          className={`${c.isLikeByme ? "text-rose-500" : "text-slate-400"} hover:text-rose-500  transition`}>
+          <FontAwesomeIcon icon={faHeart} />
+        </button> 
+        <p className="text-xs text-slate-400 ">10</p>
      
+      </div>
+
     </div>
   ))}
 </div>
