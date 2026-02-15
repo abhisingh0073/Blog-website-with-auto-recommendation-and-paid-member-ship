@@ -98,14 +98,19 @@ useEffect(() => {
 const handelOpenNotification = async () => {
     setNotificationOpen(prev => !prev);
 
-    if(unreadCount > 0){
+    setUnreadCount(0);
+
+    try{
+
+    if(unreadCount > 0)
       await api.put("/notification/read");
 
-      setUnreadCount(0);
-      // setNotifications(prev => 
-      //   prev.map(n => ({...n, isRead: true}))
-      // );
+    } catch(err){
+
+      console.error("Failed");
     }
+
+    
   }
 
 
@@ -117,8 +122,7 @@ useEffect(() => {
   socket.on("notification", (data) => {
     console.log("it is notification server is running");
     console.log("New notification:", data);
-
-    // setNotifications((prev) => [data, ...prev]);
+    
     setNotifications((prev) => {
   const safePrev = Array.isArray(prev) ? prev : [];
   return [data, ...safePrev];

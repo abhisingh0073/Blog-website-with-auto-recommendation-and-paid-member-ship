@@ -1,6 +1,7 @@
 import { response } from "express";
 import CommentModal from "../models/CommentModal.js";
 import CommentLikeModal from "../models/CommentLikeModal.js";
+import { trusted } from "mongoose";
 
 
 export const createComment = async (req, res) => {
@@ -72,7 +73,7 @@ export const getComment = async (req, res) => {
 
 
      const result = comments.map(c => ({
-        ...c.toObject(), isLikeByMe: !!likedMap[c._id.toString()]
+        ...c.toObject(), isLikedByMe: !!likedMap[c._id.toString()]
      }));
 
      return res.json({comments: result});
@@ -118,35 +119,53 @@ export const deleteComment = async (req, res) => {
 
 
 export const likeComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req.user._id;
 
-    try{
-        const { commentId } = req.params;
-        const userId = req.user._id;
+    const existing = await CommentLikeModal.findOne({
+      user: userId,
+      comment: commentId,
+    });
+    
+    let updatedComment;
 
-        const existing = await CommentLikeModal.findById({
-            user: userId,
-            comment: commentId,
-        });
-        
-        let likesCount;
-        if(existing){
-            await CommentLikeModal.deleteOne({_id: existing._id});
+    if (existing) {
 
-             likesCount = await CommentModal.findByIdAndUpdate(commentId, {$inc: {likesCount: -1}});
-            return res.json({ liked: false });
+      await CommentLikeModal.deleteOne({ _id: existing._id });
 
-        } else{
-            await CommentLikeModal.create({
-                user: userId,
-                comment: commentId,
-            });
-            await CommentModal.findByIdAndUpdate(commentId, {$inc: {likesCount: 1}});
-console.log(likesCount);
-            return res.json({liked: true, likesCount: likesCount.likesCount});
+      updatedComment = await CommentModal.findByIdAndUpdate(
+        commentId,
+        { $inc: { likesCount: -1 } },
+        { new: true }
+      );
 
-        }
+ 
+      return res.json({
+        liked: false,
+        likesCount: updatedComment.likesCount,
+      });
 
-    } catch(err){
-        res.status(500).json({message: "Server error"});
+    } else {
+
+      await CommentLikeModal.create({
+        user: userId,
+        comment: commentId,
+      });
+
+      updatedComment = await CommentModal.findByIdAndUpdate(
+        commentId,
+        { $inc: { likesCount: 1 } },
+        { new: true }
+      );
+
+      return res.json({
+        liked: true,
+        likesCount: updatedComment.likesCount,
+      });
     }
-}
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -62,7 +62,7 @@ export default function UserPostCardMenu({onEdit, postId, isSaved, onSavedChange
                onClick={onEdit}/> 
 
               <MenuItem 
-               onClick={() => setOpenDeleteConfModal(true)}
+               onClick={() => {onClose(), setOpenDeleteConfModal(true)}}
                icon={faTrash} 
                label="Delete" 
                css="hover:bg-red-400/50 text-red-600"

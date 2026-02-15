@@ -11,7 +11,7 @@ import { updateProfile, fetchUserPosts } from "../../../api/userApi";
 import { useToast } from "../../../context/ToastContext";
 
 export default function UserProfileContent({user}){
-
+console.log(user);
 
   const apiUrl = "http://localhost:3456";
   const toast = useToast();
@@ -245,7 +245,7 @@ if (!currentUser) {
            <h1 className="text-4xl font-bold">{user.name}</h1>
 
           <p className="text-sm mt-3 font-medium text-slate-200">
-            {followers.toLocaleString()} subscribers · {user.postsCount} posts
+            {followers.toLocaleString()} subscribers · {user.postCount} posts
           </p>
 
           <button 

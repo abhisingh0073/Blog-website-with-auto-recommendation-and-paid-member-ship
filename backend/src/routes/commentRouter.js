@@ -4,7 +4,7 @@ import { createComment, deleteComment, getComment, likeComment } from "../contro
 
 const commentRouter = express.Router();
 
-commentRouter.post("/like/:postId", authMiddleware, likeComment)
+commentRouter.post("/like/:commentId", authMiddleware, likeComment)
 commentRouter.get("/:postId", getComment);
 commentRouter.post("/", authMiddleware, createComment);
 commentRouter.delete("/:commentId", authMiddleware, deleteComment);

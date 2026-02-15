@@ -16,6 +16,6 @@ export const deleteComment = (commentId) => {
 
 
 
-export const commentLikeApi = (postId) => {
-    return api.post(`/comment/like/${postId}`,{ withCredentials: true});
+export const commentLikeApi = (commentId) => {
+    return api.post(`/comment/like/${commentId}`,{ withCredentials: true});
 }

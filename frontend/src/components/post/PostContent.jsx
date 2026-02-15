@@ -93,7 +93,7 @@ const PostContent = ({post}) => {
         <span>{formatRelativeTime(post.publishedAt)}</span>
       </div>
 
-      {/* Rendered HTML Content */}
+     
       <div
         className="prose prose-slate max-w-none 
           prose-headings:text-slate-900 

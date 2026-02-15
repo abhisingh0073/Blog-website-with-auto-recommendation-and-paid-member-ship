@@ -113,8 +113,14 @@ export default function PostRightSideBar({post , reaction, user}) {
 
     try{
       const res = await postCommentApi(post._id, currentComment);
-      console.log(res + "this is after post");
-      setComments((prev) => [res.data.populatedComment, ...prev])
+      setComments((prev) => [
+        {
+       ... res.data.populatedComment,
+       likeCount: 0,
+       isLikedByMe: false,
+      },
+      
+      ...prev])
       setCurrentComment("");
       toast.success(res.data.message);
 
@@ -124,23 +130,31 @@ export default function PostRightSideBar({post , reaction, user}) {
   }
 
 
-  const handleCommentLike = async (commentId, index) => {
+const handleCommentLike = async (commentId, index) => {
+  try {
+    console.log(commentId+ " " + index); 
+    const res = await commentLikeApi(commentId);
 
-    try{
-      const { likesCount, isLikedByMe } = await commentLikeApi(commentId);
-      setComments(prev => {
-        const copy = [...prev];
-        copy[index] = {
-          ...copy[index], likesCount, isLikedByMe
-        }
+    console.log(res);
+     
+    const {likesCount, liked } = res;
 
-        return copy;
-      })
+    setComments((prev) => {
+      const copy = [...prev];
+      copy[index] = {
+        ...copy[index],
+        likesCount,
+        isLikedByMe: liked,
+      };
 
-    } catch(err){
-      toast.error(err.response.data.message || "Something went Wrong")
-    }
+      console.log(copy);
+      return copy;
+    });
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Something went wrong");
   }
+};
+
 
 
 
@@ -153,7 +167,11 @@ export default function PostRightSideBar({post , reaction, user}) {
     const fetchComment = async () => {
       try{
         const resComment = await getCommentApi(post._id);
-        setComments(resComment.data.comments || []);      
+        setComments((resComment.data.comments || []).map(c => ({
+          ...c,
+          likesCount: c.likesCount ?? 0,
+          isLikedByMe: !!c.isLikedByMe,
+        })));      
       
       }catch(err){
         toast.error(err.response.data.message || "Something went wrong to Comment");
@@ -307,7 +325,7 @@ export default function PostRightSideBar({post , reaction, user}) {
 
 
    <div className="max-h-80 overflow-y-auto no-scrollbar">
-  {comments.map((c) => (
+  {comments.map((c, index) => (
     <div
       key={c._id}
       className="flex gap-3 px-4 py-3 border-b border-slate-100 last:border-b-0"
@@ -334,11 +352,11 @@ export default function PostRightSideBar({post , reaction, user}) {
 
       <div className="flex flex-col text-center">
         <button 
-          onClick={handleCommentLike(c._id, index)}
-          className={`${c.isLikeByme ? "text-rose-500" : "text-slate-400"} hover:text-rose-500  transition`}>
+          onClick={() => handleCommentLike(c._id, index)}
+          className={`${c.isLikedByMe ? "text-rose-500" : "text-slate-400"} hover:text-rose-500 transition`}>
           <FontAwesomeIcon icon={faHeart} />
         </button> 
-        <p className="text-xs text-slate-400 ">10</p>
+        <p className="text-xs text-slate-400 ">{c.likesCount || 0}</p>
      
       </div>
 

@@ -3,7 +3,8 @@ import slugify from "slugify";
 import PostReactionModel from "../models/PostReactionModel.js";
 import ReadLaterModel from "../models/ReadLaterModel.js";
 import ReadPostModel from "../models/ReadPostModel.js";
-import { fstat } from "fs";
+import path from "path";
+import fs from "fs";
 import FollowModel from "../models/FollowModel.js";
 import MembershipModel from "../models/MembershipModel.js";
 import mongoose from "mongoose";
@@ -195,6 +196,16 @@ export async function deletePost(req, res){
       if(post.author.toString() !== userId.toString()){
         return res.status(403).json({message: "Not allowed" });
       }
+
+      const fullpath = path.join(process.cwd(), post.coverImage);
+      console.log(fullpath);
+
+      fs.unlink(`backend\src\public\uploads\698306ec6132fead2d14398a\1771160019441-747661698.jpg`, (err) => {
+        console.error(err.message);
+      })
+
+    //   await Post.findByIdAndDelete(postId);
+
 
       post.isDeleted = true;
       await post.save();
