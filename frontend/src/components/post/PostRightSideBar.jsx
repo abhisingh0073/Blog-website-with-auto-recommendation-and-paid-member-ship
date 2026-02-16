@@ -116,7 +116,7 @@ export default function PostRightSideBar({post , reaction, user}) {
       setComments((prev) => [
         {
        ... res.data.populatedComment,
-       likeCount: 0,
+       likesCount: 0,
        isLikedByMe: false,
       },
       
@@ -130,30 +130,24 @@ export default function PostRightSideBar({post , reaction, user}) {
   }
 
 
-const handleCommentLike = async (commentId, index) => {
+
+const handleCommentLike = async (commentId) => {
   try {
-    console.log(commentId+ " " + index); 
     const res = await commentLikeApi(commentId);
+    const { likesCount, liked } = res.data;
 
-    console.log(res);
-     
-    const {likesCount, liked } = res;
-
-    setComments((prev) => {
-      const copy = [...prev];
-      copy[index] = {
-        ...copy[index],
-        likesCount,
-        isLikedByMe: liked,
-      };
-
-      console.log(copy);
-      return copy;
-    });
+    setComments((prev) =>
+      prev.map((c) =>
+        c._id === commentId
+          ? { ...c, likesCount, isLikedByMe: liked }
+          : c
+      )
+    );
   } catch (err) {
     toast.error(err.response?.data?.message || "Something went wrong");
   }
 };
+
 
 
 
@@ -352,7 +346,7 @@ const handleCommentLike = async (commentId, index) => {
 
       <div className="flex flex-col text-center">
         <button 
-          onClick={() => handleCommentLike(c._id, index)}
+          onClick={() => handleCommentLike(c._id)}
           className={`${c.isLikedByMe ? "text-rose-500" : "text-slate-400"} hover:text-rose-500 transition`}>
           <FontAwesomeIcon icon={faHeart} />
         </button> 
