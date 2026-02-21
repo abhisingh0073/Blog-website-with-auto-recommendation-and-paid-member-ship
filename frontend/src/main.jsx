@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { ThemeProvider } from './context/ThemeProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -12,7 +13,9 @@ createRoot(document.getElementById('root')).render(
         {/* <LoaderProvider> */}
           <ToastProvider>
             <AuthProvider>
-              <App/>
+              <ThemeProvider>
+                <App/>
+              </ThemeProvider>
             </AuthProvider>
           </ToastProvider>
         {/* </LoaderProvider> */}

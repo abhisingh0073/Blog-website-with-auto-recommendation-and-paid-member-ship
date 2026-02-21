@@ -325,7 +325,7 @@ const ToolBar = ({ editor }) => {
   }
 
   return (
-    <div className="flex gap-1 border-b bg-slate-50 p-2">
+    <div className="flex gap-1 border-b bg-[var(--bg-surface)] p-2">
 
       <select
         value={editorState.activeHeading}
@@ -337,7 +337,7 @@ const ToolBar = ({ editor }) => {
             editor.chain().focus().setHeading({ level: Number(v[1]) }).run();
           }
         }}
-        className="px-2 py-1 border rounded-md text-sm bg-white"
+        className="px-2 py-1 border rounded-md text-sm bg-[var(--bg-color)]"
       >
         <option value="paragraph">Paragraph</option>
         <option value="h1">H1</option>
@@ -345,14 +345,14 @@ const ToolBar = ({ editor }) => {
         <option value="h3">H3</option>
       </select>
 
-      <div className='w-[1px] h-6 bg-slate-300 mx-1' />
+      <div className='w-[1px] h-6 bg-[var(--bg-surface)] mx-1' />
 
       <MenuBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editorState.isBold} disabled={!editorState.canBold} icon={faBold} />
       <MenuBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editorState.isBulletList} disabled={!editorState.canBulletList} icon={faListUl} />
       <MenuBtn onClick={() => editor.chain().focus().toggleCodeBlock().run()} active={editorState.isCodeBlock} disabled={!editorState.canCodeBlock} icon={faCode} />
       <MenuBtn onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editorState.isBlockquote} disabled={!editorState.canBlockquote} icon={faQuoteRight} />
 
-      <div className="w-[1px] h-6 bg-slate-300 mx-1" />
+      <div className="w-[1px] h-6 bg-[var(--bg-surface)] mx-1" />
 
       <MenuBtn onClick={setLink} active={editorState.isLink} icon={faLink} />
 
@@ -363,7 +363,7 @@ const ToolBar = ({ editor }) => {
 
       <MenuBtn onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} icon={faTable} />
 
-      <div className="w-[1px] h-6 bg-slate-300 mx-1" />
+      <div className="w-[1px] h-6 bg-[var(--bg-surface)] mx-1" />
 
       <MenuBtn onClick={() => editor.chain().focus().undo().run()} disabled={!editorState.canUndo} icon={faRotateLeft} />
       <MenuBtn onClick={() => editor.chain().focus().redo().run()} disabled={!editorState.canRedo} icon={faRotateRight} />
@@ -388,7 +388,7 @@ const MenuBtn = ({ onClick, active, icon, disabled }) => {
       onClick={onClick}
       disabled={disabled}
       className={`p-2 rounded-md min-w-[36px]
-        ${active ? 'bg-indigo-600 text-white' : 'hover:bg-slate-200'}
+        ${active ? 'bg-indigo-600 text-[var(--text-primary)]' : 'hover:bg-[var(--hover-bg)]'}
         ${disabled ? 'opacity-30 cursor-not-allowed' : ''}
       `}
     >

@@ -1,5 +1,62 @@
 @import "tailwindcss";
 
+:root {
+  /* Light Theme - Soft & Airy */
+  --bg-color: #fcfcfd;       /* Very light gray-blue */
+  --bg-surface: #ffffff;    /* Pure white for cards/inputs */
+  --text-primary: #0f172a;  /* Deep Slate */
+  --text-secondary: #64748b;/* Muted Slate for subtitles */
+  --border-color: #e2e8f0;  /* Subtle divider */
+  --accent: #2563eb;        /* Professional Blue */
+  --button-bg: #f1f5f9;
+  --hover-bg: #e2e8f0;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+body[data-theme="dark"] {
+  /* Dark Theme - Deep & Modern */
+  --bg-color: #020617;       /* Midnight Slate */
+  --bg-surface: #0f172a;    /* Elevated Slate surface */
+  --text-primary: #f8fafc;  /* Soft white text */
+  --text-secondary: #94a3b8;/* Gray-blue metadata */
+  --border-color: #1e293b;  /* Dark subtle borders */
+  --accent: #3b82f6;        /* Brightened Blue for dark mode */
+  --button-bg: #1e293b;
+  --hover-bg: #334155;
+  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.theme-toggle {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  background: var(--button-bg);
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
 /* ================================
    TipTap Placeholder
 ================================ */

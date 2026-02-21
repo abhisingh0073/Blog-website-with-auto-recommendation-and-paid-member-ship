@@ -1,8 +1,11 @@
-import { faMoon, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faUser, faSignOutAlt, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useToast } from "../../context/ToastContext";
 import api from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useTheme } from "../../context/ThemeProvider";
 
 export default function ProfileModal({ isOpen, onClose, user }) {
   if (!isOpen) return null;
@@ -10,6 +13,9 @@ export default function ProfileModal({ isOpen, onClose, user }) {
   const toast = useToast();
   const navigate = useNavigate();
   const apiUrl = "http://localhost:3456";
+
+  const { theme, toggleTheme } = useTheme();
+  
 
   
 
@@ -32,11 +38,30 @@ export default function ProfileModal({ isOpen, onClose, user }) {
 
 
 
+
+
+    // useEffect(() => {
+    //   const savedTheme = localStorage.getItem("theme");
+    //   if(savedTheme){
+    //     setTheme(savedTheme);
+    //   } else{
+    //     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    //     setTheme(prefersDark ? "dark" : "light");
+    //   }
+    // }, []);
+  
+    // useEffect(() => {
+    //   document.body.setAttribute("data-theme", theme);
+    //   localStorage.setItem("theme", theme);
+    // }, [theme]);
+
+
+
   return (
     <div className="fixed inset-0 z-[1000] bg-transparent" onClick={onClose}>
      
       <div 
-        className="absolute right-6 top-16 w-72 bg-slate-900 border border-slate-700 text-slate-100 rounded-2xl shadow-2xl p-2 animate-in fade-in zoom-in duration-150"
+        className="absolute right-6 top-16 w-72 bg-[var(--bg-color)] border border-[var(--border-color)] text-[var(--text-color)] rounded-2xl shadow-2xl p-2 animate-in fade-in zoom-in duration-150"
         onClick={(e) => e.stopPropagation()} 
       >
         
@@ -44,7 +69,7 @@ export default function ProfileModal({ isOpen, onClose, user }) {
           <img 
             src={user ? `${apiUrl}${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/709/709699.png"} 
             alt="Profile"
-            className="w-10 h-10 rounded-full border border-slate-600 object-cover"
+            className="w-10 h-10 rounded-full border border-[var(--border-color)] object-cover"
           />
           <div className="flex flex-col">
             <h3 className="font-bold text-sm leading-tight">{user?.name || "User" }</h3>
@@ -52,12 +77,13 @@ export default function ProfileModal({ isOpen, onClose, user }) {
           </div>
         </div>
 
-        <div className="border-b border-slate-700 my-1 mx-2" />
+        <div className="border-b border-[var(--border-color)] my-1 mx-2" />
 
         
         <div className="flex flex-col gap-1">
           <MenuButton icon={faUser} label="Your Profile" onClick={handleProfilePage} />
-          <MenuButton icon={faMoon} label="Dark Mode" onClick={() => {}} />
+          <MenuButton icon={theme === "light" ? faMoon : faSun} label={theme === "light" ? "Dark Mode" : "Light Mode"} onClick={toggleTheme}
+            />
           
           <div className="border-b border-slate-700 my-1 mx-2" />
           
@@ -74,7 +100,7 @@ export default function ProfileModal({ isOpen, onClose, user }) {
 }
 
 // Helper component for cleaner code
-function MenuButton({ icon, label, onClick, css = "hover:bg-slate-800" }) {
+function MenuButton({ icon, label, onClick, css = "hover:bg-[var(--hover-bg)]" }) {
   return (
     <button 
       onClick={onClick}

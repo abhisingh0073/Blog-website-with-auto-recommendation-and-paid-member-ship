@@ -30,7 +30,7 @@ export default function Sidebar() {
   const [activeTab, setActiveTab] = useState("Home");
 
   return (
-    <aside className="w-60 border-r h-full py-4 px-2 bg-white">
+    <aside className="w-60 border-r h-full py-4 px-2 bg-[var(--bg-surface)]">
       <nav className="space-y-1">
         {tabs.map((tab) => (
           <SidebarItem
@@ -51,7 +51,7 @@ function SidebarItem({ icon, label, to }) {
     <NavLink 
       to={to}
       className={({isActive}) => `flex items-center text-[15px] gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors
-        ${isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-100" : "text-slate-600 hover:bg-gray-500/20"}
+        ${isActive ? "bg-indigo-600 text-[var(--text-primary)] shadow-md shadow-[var(--shadow)]" : "text-slate-600 hover:bg-[var(--hover-bg)] hover:text-[var(--text-secondary)]"}
         `}>
 
 
@@ -60,7 +60,7 @@ function SidebarItem({ icon, label, to }) {
           <FontAwesomeIcon
             icon={icon}
             className={`w-5 ${
-              isActive ? "text-white" : "text-slate-600 opacity-80"
+              isActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)] opacity-80"
             }`}
           />
           <span className="font-semibold">{label}</span>

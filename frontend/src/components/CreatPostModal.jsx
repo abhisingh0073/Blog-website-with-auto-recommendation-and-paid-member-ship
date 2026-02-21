@@ -89,7 +89,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
 
 
   return (
-    <div className="fixed flex inset-0 z-50 w-full bg-slate-100">
+    <div className="fixed flex inset-0 z-50 w-full bg-[var(--bg-surface)]">
 
       <form action="" onSubmit={handleSubmit} encType="multipart/form-data"  className="flex w-full h-full">
         <div className="m-3 w-full flex flex-col items-center">
@@ -98,7 +98,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
               value={form.title}
               placeholder="Title"
               onChange={handleChange}
-              className="w-full p-2 pb-1 text-xl outline-none border border-gray-300 bg-white placeholder-gray-200" />
+              className="w-full p-2 pb-1 text-xl outline-none border border-[var(--border-color)] bg-[var(--bg-surface)] placeholder-[var(--text-secondary)]" />
             <div className="mt-3 w-[60rem] flex-1 ">
 
                 {/* Editor */}
@@ -116,12 +116,12 @@ export default function CreatePostModal({ isOpen, onClose }) {
 
 
         {/* section 2 */}
-        <div className="w-[20%] bg-white">
+        <div className="w-[20%] bg-[var(--bg-surface)]">
 
             {/* preview and status */}
            <div className="flex gap-3 m-4">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200 font-medium text-slate-700 shadow-sm">
-                <FontAwesomeIcon icon={faEye} className="text-slate-600" />
+              <button className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-color)] border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200 font-medium text-slate-700 shadow-sm">
+                <FontAwesomeIcon icon={faEye} className="text-[var(--text-secondary)]" />
                 Preview
               </button>
   
@@ -129,7 +129,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
                 name="status"
                 value={form.status}
                 onChange={handleChange} 
-                className="px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 font-medium outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all duration-200 cursor-pointer shadow-sm hover:border-slate-400"
+                className="px-4 py-2 border border-[var(--border-color)] rounded-lg bg-[var(--bg-color)] text-[var(--text-primary)] font-medium outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all duration-200 cursor-pointer shadow-sm hover:border-[var(--border-color)]"
               >
                 <option value="public">Public</option>
                 <option value="unlisted">Unlisted</option>
@@ -139,9 +139,9 @@ export default function CreatePostModal({ isOpen, onClose }) {
 
            {/* set coverimage */}
            <div>
-            <div className="flex flex-col border-t border-slate-200 py-2 gap-2 m-3">
+            <div className="flex flex-col border-t border-[var(--border-color)] py-2 gap-2 m-3">
                <h3>Set Cover Image</h3>
-               <div className="relative w-full aspect-video rounded-lg bg-slate-200 border border-dashed border-slate-400 flex items-center justify-center overflow-hidden transition-all">
+               <div className="relative w-full aspect-video rounded-lg bg-slate-200 border border-dashed border-[var(--border-color)] flex items-center justify-center overflow-hidden transition-all">
                    {coverImage ? (
                     <img
                       src={coverImage}
@@ -155,7 +155,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
                </div>
                
                <div className="flex gap-2 items-center justify-center">
-                     <label className="px-3 py-2 text-[15px] font-medium border border-indigo-600 text-black rounded text-center cursor-pointer hover:border-indigo-700 hover:bg-slate-100 transition">Select Image
+                     <label className="px-3 py-2 text-[15px] font-medium border border-indigo-600 text-[var(--text-primary)] rounded text-center cursor-pointer hover:border-indigo-700 hover:bg-[var(--hover-bg)] transition">Select Image
                      <input 
                             ref={imageRef}
                             type="file" 
@@ -167,7 +167,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
                     <label
                     type="button" 
                     onClick={handleRemove}
-                    className=" px-3 py-2 border border-slate-300 text-black text-[15px] font-medium rounded cursor-pointer hover:bg-slate-100 transition">Remove Image
+                    className=" px-3 py-2 border border-[var(--border-color)] text-[var(--[text-primary])] text-[15px] font-medium rounded cursor-pointer hover:bg-[var(--hover-bg)] transition">Remove Image
                     </label>
 
                </div>
@@ -175,23 +175,23 @@ export default function CreatePostModal({ isOpen, onClose }) {
             </div>
 
             {/* tags */}
-            <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
+            <div className="flex flex-col gap-2 m-3 pt-2 border-t border-[var(--border-color)]">
                 <h3>Tags</h3>
                 <textarea name="tags" id=""
                 value={form.tags}
                 onChange={handleChange}
                 placeholder="Add comma(,) between tags"
-                className="outline-none w-full h-[150px] border border-slate-300 resize-none p-1 rounded-lg"
+                className="outline-none w-full h-[150px] border border-[var(--border-color)] resize-none p-1 rounded-lg"
                 />
             </div>
 
             {/* category */}
-            <div className="flex flex-col gap-2 m-3 pt-2 border-t border-slate-300">
+            <div className="flex flex-col gap-2 m-3 pt-2 border-t border-[var(--border-color)]">
                 <h3>Select Category</h3>
                 <select name="category"
                     value={form.category}
                     onChange={handleChange}
-                    className="border rounded-lg border-slate-400 p-1 outline-none">
+                    className="border rounded-lg border-[var(--border-color)] bg-[var(--bg-surface)] p-1 outline-none">
                     <option value="">Select</option>
                     <option value="tech">Tech</option>
                     <option value="programming">Programming</option>
@@ -200,7 +200,7 @@ export default function CreatePostModal({ isOpen, onClose }) {
                 </select>
             </div>
 
-            <div className="flex flex-row gap-2 m-3 pt-2 border-t border-slate-300">
+            <div className="flex flex-row gap-2 m-3 pt-2 border-t border-[var(--border-color)]">
               <label className="font-medium">For Membersonly</label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -230,14 +230,14 @@ export default function CreatePostModal({ isOpen, onClose }) {
 
             
             {/* submit and cancel button */}
-            <div className="flex gap-3 justify-end border-t border-slate-300 m-3 pt-3">
+            <div className="flex gap-3 justify-end border-t border-[var(--border-color)] m-3 pt-3">
                 <button 
                 type="button"
                 onClick={onClose}
-                className="py-2 px-3 border border-slate-300 rounded-lg cursor-pointer font-medium hover:bg-slate-300">Cancel</button>
+                className="py-2 px-3 border border-[var(--border-color)] rounded-lg cursor-pointer font-medium hover:bg-[var(--hover-bg)]">Cancel</button>
                 <button 
                 type="submit"
-                className={`py-2 px-3 border bg-indigo-600 rounded-lg text-white cursor pointer hover:bg-indigo-700 font-medium${loading&& "cursor-not-allowed"} `}>{loading? (<ButtonSpinner/>) : "Submit"}</button>
+                className={`py-2 px-3 border bg-indigo-600 rounded-lg text-[var(--text-primary)] cursor pointer hover:bg-indigo-700 font-medium${loading&& "cursor-not-allowed"} `}>{loading? (<ButtonSpinner/>) : "Submit"}</button>
             </div>
            </div>
         </div>

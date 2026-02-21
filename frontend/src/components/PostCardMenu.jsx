@@ -43,7 +43,7 @@ const ActionButton = ({ onClick, active, icon, label }) => (
   <button
     onClick={onClick}
     className={`w-full flex items-center gap-3 px-4 py-3 text-sm
-      ${active ? "text-amber-500" : "text-white hover:bg-white/10"}`}
+      ${active ? "text-amber-500" : "text-[var(--text-primary)] hover:bg-[var(--bg-surface)]/10"}`}
   >
     <FontAwesomeIcon icon={icon} />
     <span>{label}</span>

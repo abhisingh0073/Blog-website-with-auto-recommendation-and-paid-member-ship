@@ -16,20 +16,20 @@ export default function AboutSectionModal({isOpen, onClose, user}){
 return(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
     <div
-      className="absolute inset-0 bg-black/70"
+      className="absolute inset-0 bg-[var(--bg-color)]/70"
       onClick={onClose}
     />
 
    
     <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto
-                    rounded-xl bg-neutral-900 text-white p-6 z-10">
+                    rounded-xl bg-neutral-900 text-[var(--text-color)] p-6 z-10">
 
    
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">{user.name}</h2>
         <button
           onClick={onClose}
-          className="text-white/70 hover:text-white text-2xl cursor-pointer"
+          className="text-[var(--text-secondary)]/70 hover:text-[var(--text-primary)] text-2xl cursor-pointer transition"
         >
           ✕
         </button>
@@ -37,7 +37,7 @@ return(
 
     
       <h3 className="text-lg font-medium mb-2">Description</h3>
-      <p className="text-sm text-white/80 leading-relaxed mb-4">
+      <p className="text-sm text-[var(--text-primary)]/80 leading-relaxed mb-4">
         {user.bio}
       </p>
 
@@ -58,13 +58,13 @@ return(
           </li>
         ))
       ) : (
-  <p className="text-white/50">No social links added</p>
+  <p className="text-[var(--text-secondary)]/50">No social links added</p>
 )}
 
       </ul>
 
       
-      <div className="mt-6 space-y-2 text-sm text-white/70">
+      <div className="mt-6 space-y-2 text-sm text-[var(--text-primary)]/70">
         <p>🌍 United States</p>
         <p>📅 Joined {dateString}</p>
         <p>👥 {user.follower} subscribers</p>

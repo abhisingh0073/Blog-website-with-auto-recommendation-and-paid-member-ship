@@ -14,10 +14,29 @@ import SearchPage from "./pages/SearchPage";
 function App() {
 
   const { checkingAuth } = useAuth();
+  // const [theme, setTheme] = useState("light");
   
   if(checkingAuth){
     return <div>Loading....</div>
   }
+
+  // useEffect(() => {
+  //   const savedTheme = localStorage.getItem("theme");
+  //   if(savedTheme){
+  //     setTheme(savedTheme);
+  //   } else{
+  //     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  //     setTheme(prefersDark ? "dark" : "light");
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   document.body.setAttribute("data-theme", theme);
+  //   localStorage.setItem("theme", theme);
+  // }, [theme]);
+
+
+
   return (
     <Routes>
       {/* Layout Route */}
