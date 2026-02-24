@@ -183,22 +183,22 @@ const handleCommentLike = async (commentId) => {
     <>
     <aside className="sticky top-0 space-y-6 w-full max-w-[300px]">
       
-      <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
+      <div className="border border-[var(--border-color)] rounded-xl p-5 bg-[var(--bg-surface)] shadow-sm">
         <div className="flex flex-row gap-3 items-center">
            <img
              src={`${apiUrl}${post.author.avatar}`}
               alt="User avatar"
               onClick={() => navigate(`/c/${post.author._id}`)}
-              className="w-10 h-10 rounded-full object-cover cursor-pointer border border-transparent  hover:border-slate-400 tansition-color"
+              className="w-10 h-10 rounded-full object-cover cursor-pointer border border-[var(--border-color)]  hover:border-[var(--hover-bg)] tansition-color"
            />
            <h3 
            onClick={() => navigate(`/c/${post.author._id}`)}
-           className="text-lg font-bold text-slate-900 leading-tight cursor-pointer">
+           className="text-lg font-bold text-[var(--text-primary)] leading-tight cursor-pointer">
               {post.author.name}
              </h3> 
         </div>
         
-        <p className="text-sm text-slate-500 mt-1 mb-4">
+        <p className="text-sm text-[var(--text-secondary)] mt-1 mb-4">
           {followers.toLocaleString()} followers
         </p>
 
@@ -208,34 +208,34 @@ const handleCommentLike = async (commentId) => {
           onClick={toggleFollow}
           className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-95
             ${following 
-              ? "bg-slate-100 text-slate-700 border border-slate-200" 
-              : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-100"}`}
+              ? "bg-slate-100 text-slate-700 border border-[var(--border-color)]" 
+              : "bg-indigo-600 text-white hover:bg-indigo-700 "}`}
         >
           {following ? "Following" : "Follow"}
         </button>
         <button
           onClick={() => setSubscriptionModal(true)}
-          className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all bg-green-600 text-white cursor-pointer mt-2 hover:bg-green-500"
+          className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all bg-green-600 text-[var(--text-primary)] cursor-pointer mt-2 hover:bg-green-500"
         >{membershipJoin ? "Already Joined": "Join Subscription"}</button>
       </div>
 
       {/* Actions Card */}
-      <div className="border border-slate-200 rounded-xl p-2 bg-white shadow-sm overflow-hidden">
+      <div className="border border-[var(--border-color)] rounded-xl p-2 bg-[var(--bg-surface)] shadow-sm overflow-hidden">
         <div className="flex p-3 gap-3 items-center">
-            <h3 className="text-sm font-medium text-slate-600 ">{post.views} views</h3>
-            <span className="text-slate-300">|</span>
-            <h3 className="text-sm font-medium text-slate-600">{formatRelativeTime(post.publishedAt)}</h3>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] ">{post.views} views</h3>
+            <span className="text-[var(--text-secondary)]">|</span>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)]">{formatRelativeTime(post.publishedAt)}</h3>
         </div>
 
-        <div className="h-[1px] bg-slate-100 my-1 mx-2" />
+        <div className="h-[1px] bg-[var(--border-color)] my-1 mx-2" />
 
        <div className="flex gap-2">
 
         <ActionButton
           onClick={handleLike}
           active={liked === "like"}
-          activeColor="text-indigo-600 bg-indigo-50"
-          hoverColor="hover:text-indigo-600 hover:bg-slate-50"
+          activeColor="text-indigo-600 bg-[var(--bg-secondary)]"
+          hoverColor="hover:text-indigo-600 hover:bg-[var(--hover-bg)]"
           icon={liked === "like" ? faThumbsUpSolid : faThumbsUp}
           label={likeCount.toLocaleString()}
         />
@@ -244,8 +244,8 @@ const handleCommentLike = async (commentId) => {
         <ActionButton
           onClick={handleDislike}
           active={liked === "dislike"}
-          activeColor="text-red-600 bg-red-50"
-          hoverColor="hover:text-red-600 hover:bg-slate-50"
+          activeColor="text-red-600 bg-[var(--bg-secondary)]"
+          hoverColor="hover:text-red-600 hover:bg-[var(--hover-bg)]"
           icon={liked === "dislike" ? faThumbsDownSolid : faThumbsDown}
           label={dislikeCount.toLocaleString()}
         />            
@@ -255,7 +255,7 @@ const handleCommentLike = async (commentId) => {
         
 
 
-        <div className="h-[1px] bg-slate-100 my-1 mx-2" />
+        <div className="h-[1px] bg-[var(--border-color)] my-1 mx-2" />
 
         {/* Save Button */}
         <ActionButton
@@ -270,14 +270,14 @@ const handleCommentLike = async (commentId) => {
       </div>
 
 
-<div className="border border-slate-200 rounded-xl shadow-sm bg-white">
+<div className="border border-[var(--border-color)] rounded-xl shadow-sm bg-[var(--bg-surface)]">
   
-  <div className="flex items-center gap-3 px-4 py-3 text-slate-600 text-sm font-medium">
-    <FontAwesomeIcon icon={faComment} className="text-slate-400" />
+  <div className="flex items-center gap-3 px-4 py-3 text-[var(--text-secondary)] text-sm font-medium">
+    <FontAwesomeIcon icon={faComment} className="text-[var(--text-secondary)]" />
     <span>{comments.length} Comments</span>
   </div>
 
-  <div className="h-px bg-slate-100 mx-4" />
+  <div className="h-px bg-[var(--border-color)] mx-4" />
 
    <form action="" onSubmit={handleCommentButton}>
       <div className="flex gap-3 px-4 py-4">
@@ -296,14 +296,14 @@ const handleCommentLike = async (commentId) => {
         rows={2}
         placeholder="Add a comment..."
         onChange={(e) => setCurrentComment(e.target.value)}
-        className="w-full resize-none text-sm outline-none border-b border-slate-300 focus:border-indigo-500 placeholder-slate-400 pb-1"
+        className="w-full resize-none text-sm outline-none border-b border-[var(--border-color)] focus:border-indigo-500 placeholder-slate-400 pb-1"
       />
 
       <div className="flex justify-end mt-2">
         <button
         type="submit"
           className="px-4 py-1.5 text-sm font-medium rounded-lg
-                     bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                     bg-indigo-600 text-[var(--text-primary)] hover:bg-indigo-700 transition"
         >
           Comment
         </button>
@@ -322,7 +322,7 @@ const handleCommentLike = async (commentId) => {
   {comments.map((c, index) => (
     <div
       key={c._id}
-      className="flex gap-3 px-4 py-3 border-b border-slate-100 last:border-b-0"
+      className="flex gap-3 px-4 py-3 border-b border-[var(--border-color)] last:border-b-0"
     >
      
       <img
@@ -333,13 +333,13 @@ const handleCommentLike = async (commentId) => {
 
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-slate-800">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">
             {c.user.name}
           </p>
-          <span className="text-xs text-slate-400">{formatRelativeTime(c.createdAt).toString()}</span>
+          <span className="text-xs text-[var(--text-secondary)]">{formatRelativeTime(c.createdAt).toString()}</span>
         </div>
 
-        <p className="text-sm text-slate-700 leading-relaxed mt-0.5">
+        <p className="text-sm text-[var(--text-primary)] leading-relaxed mt-0.5">
           {c.comment}
         </p>
       </div>
@@ -347,7 +347,7 @@ const handleCommentLike = async (commentId) => {
       <div className="flex flex-col text-center">
         <button 
           onClick={() => handleCommentLike(c._id)}
-          className={`${c.isLikedByMe ? "text-rose-500" : "text-slate-400"} hover:text-rose-500 transition`}>
+          className={`${c.isLikedByMe ? "text-rose-500" : "text-[var(--text-secondary)]"} hover:text-rose-500 transition`}>
           <FontAwesomeIcon icon={faHeart} />
         </button> 
         <p className="text-xs text-slate-400 ">{c.likesCount || 0}</p>
@@ -380,7 +380,7 @@ const ActionButton = ({ onClick, active, icon, label, activeColor, hoverColor })
   <button
     onClick={onClick}
     className={`w-full flex items-center gap-2 px-4 py-3 rounded-lg transition-all text-sm font-medium group
-      ${active ? activeColor : `text-slate-600 ${hoverColor}`}`}
+      ${active ? activeColor : `text-[var(--text-secondary)] ${hoverColor}`}`}
   >
     <FontAwesomeIcon 
       icon={icon} 

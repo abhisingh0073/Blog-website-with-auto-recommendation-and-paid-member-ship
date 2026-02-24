@@ -11,7 +11,7 @@ export default function AppLayout() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
 
-        <main className="flex-1 overflow-y-auto p-4 bg-slate-50">
+        <main className="flex-1 overflow-y-auto bg-[var(--bg-surface)] p-4">
           <Outlet />
         </main>
       </div>

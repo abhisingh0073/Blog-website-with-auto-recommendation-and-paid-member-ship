@@ -71,12 +71,12 @@ const toast = useToast();
       )}
 
 
-      <div className="flex flex-col gap-3 cursor-pointer group transition-color duration-200 ease-out hover:-translate-y-1 hover:bg-slate-300/5 rounded-xl pb-4 relative"
+      <div className="flex flex-col gap-3 cursor-pointer group transition-color duration-200 ease-out hover:-translate-y-1 hover:bg-[var(--hover-bg)]/5 rounded-xl pb-4 relative"
           onClick={() => navigate(`/p/${post._id}`)}
           >
         
         {/* cover image */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-200" >
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-[var(--bg-surface)]" >
           <img
             src={`${apiUrl}${post.coverImage}`}
             alt="Thumbnail"
@@ -95,7 +95,7 @@ const toast = useToast();
             <img
               src={`${apiUrl}${post.author.avatar}`}
               alt="Channel"
-              className="w-9 h-9 rounded-full hover:ring-1 ring-slate-100 transition-all"
+              className="w-9 h-9 rounded-full transition-all"
             />
           </div>
 
@@ -104,8 +104,8 @@ const toast = useToast();
               {post.title}
             </h3>
             
-            <div className="text-[13px] text-[#606060] flex flex-col leading-tight">
-              <p className="hover:text-[#0f0f0f] transition-colors font-medium">{post.author.name}</p>
+            <div className="text-[13px] text-[var(--secondary)] flex flex-col leading-tight">
+              <p className="hover:text-[var(--text-secondary)] transition-colors font-medium">{post.author.name}</p>
               <div className="flex items-center mt-0.5 opacity-90">
                 <span>{post.views} views</span>
                 <span className="mx-1.5 text-[10px]">●</span>
@@ -117,7 +117,7 @@ const toast = useToast();
             <button
               ref={buttonRef}
               onClick={openMenu}
-              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-slate-200/20 cursor-pointer"
+              className="absolute -right-2 top-0 p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--hover-bg)]/20 cursor-pointer"
             >
               <FontAwesomeIcon icon={faEllipsisVertical} />
             </button>
@@ -131,7 +131,7 @@ const toast = useToast();
             <span className="
                    absolute right-2 bottom-2
                    rounded-md
-                   bg-black/60
+                   bg-[var(--bg-color)]/60
                    px-2 py-1
                    text-xs font-semibold
                    text-green-400

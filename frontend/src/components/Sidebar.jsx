@@ -30,7 +30,7 @@ export default function Sidebar() {
   const [activeTab, setActiveTab] = useState("Home");
 
   return (
-    <aside className="w-60 border-r h-full py-4 px-2 bg-[var(--bg-surface)]">
+    <aside className="w-60 h-full py-4 px-2 bg-[var(--bg-surface)]">
       <nav className="space-y-1">
         {tabs.map((tab) => (
           <SidebarItem

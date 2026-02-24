@@ -140,7 +140,7 @@ if (!currentUser) {
 
 
     return(<>
-      <div className="min-h-screen max-w-6xl mx-auto bg-slate-900 text-white pb-20">
+      <div className="min-h-screen max-w-6xl mx-auto bg-[var(--bg-surface)] text-[var(--text-primary)] pb-20">
        <div className="max-w-6xl mx-auto px-4 pt-6">
 
 
@@ -165,7 +165,7 @@ if (!currentUser) {
                className="
                  flex items-center gap-2
                  rounded-3xl px-3 py-2
-                 bg-red-500/30 text-white
+                 bg-red-500/30 text-[var(--text-primary)]
                  hover:bg-red-500/50
                  transition cursor-pointer"
             >
@@ -180,7 +180,7 @@ if (!currentUser) {
                 
                  flex items-center gap-2
                  rounded-3xl px-3 py-2
-                 bg-black/30 text-white
+                 bg-[var(--bg-color)]/30 text-[var(--text-primary)]
                  backdrop-blur-sm
                  hover:bg-black/40
                  transition cursor-pointer"
@@ -210,9 +210,9 @@ if (!currentUser) {
             <img
               src={profileImage}
               alt="Channel profile"
-              className="w-full h-full bg-white object-cover"
+              className="w-full h-full bg-[var(--bg-color)] object-cover"
             />
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute inset-0 bg-[var(--bg-colort)]/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {profileImage && (<button 
                               onClick={() => setProfileImage(null)}
                               className="p-2 bg-white/20 hover:bg-white/40 text-red-600 rounded-full hover:text-red-700 transition-colors"
@@ -241,16 +241,16 @@ if (!currentUser) {
         </div>
          
 
-         <div className="flex flex-col gap-2 text-white">
+         <div className="flex flex-col gap-2 text-[var(--text-primary)]">
            <h1 className="text-4xl font-bold">{user.name}</h1>
 
-          <p className="text-sm mt-3 font-medium text-slate-200">
+          <p className="text-sm mt-3 font-medium text-[var(--text-primary)]">
             {followers.toLocaleString()} subscribers · {user.postCount} posts
           </p>
 
           <button 
           onClick={() => setIsAboutOpen(!aboutOpen)}
-          className="text-sm text-slate-400 cursor-pointer hover:text-indigo-400 transition block text-left">
+          className="text-sm text-[var(--text-secondary)] cursor-pointer hover:text-indigo-400 transition block text-left">
            <p>{user.bio}...</p>
            <span>more</span>
          </button>
@@ -258,7 +258,7 @@ if (!currentUser) {
         <div className="flex gap-2 w-full md:w-auto">
          <button 
          onClick={() => setIsEditAboutOpen(true)}
-         className="flex-1 md:flex-none px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-sm font-bold transition rounded-xl cursor-pointer">
+         className="flex-1 md:flex-none px-6 py-2.5 bg-[var(--bg-color)] hover:bg-[var(--hover-bg)] text-sm font-bold transition rounded-xl cursor-pointer">
             Customize
           </button>
 
@@ -269,7 +269,7 @@ if (!currentUser) {
 
 
         {/* post section */}
-        <div className="mt-12 border-b border-slate-700 flex gap-8 px-2">
+        <div className="mt-12 border-b border-[var(--border-color)] flex gap-8 px-2">
            
                 {tabs.map((tab) => (
                     <NavButton
@@ -286,7 +286,7 @@ if (!currentUser) {
        <div className="mt-3">
           <div className="max-w-6xl mx-auto px-4 pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {tabLoading && <p className="text-slate-400">Loading...</p>}
+            {tabLoading && <p className="text-[var(--text-secondary)]">Loading...</p>}
 
             {!tabLoading && activeTab === "Posts" && (
               tabData.length > 0 ? (
@@ -297,13 +297,13 @@ if (!currentUser) {
                     onDelete={handlePostDelete}/>
                 ))
               ) : (
-                <p className="text-slate-400">No posts</p>
+                <p className="text-[var(--text-secondary)]">No posts</p>
               )
             )}
 
 
             {!tabLoading && activeTab === "Videos" && (
-              <p className="text-slate-400">No videos yet</p>
+              <p className="text-[var(--text-secondary)]">No videos yet</p>
             )}
 
           </div>

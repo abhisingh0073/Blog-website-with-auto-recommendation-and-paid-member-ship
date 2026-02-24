@@ -72,31 +72,31 @@ import { formatRelativeTime } from '../../utils/formatRelativeTime';
 const PostContent = ({post}) => {
   const apiUrl = "http://localhost:3456";
   return (
-    <article className="bg-white p-8 max-w-5xl mx-auto min-h-screen border border-slate-200 shadow-sm  rounded-xl">
+    <article className="bg-[var(--bg-color)] p-8 max-w-5xl mx-auto min-h-screen border border-[var(--border-color)] shadow-sm shadow-[var(--shadow)] rounded-xl">
       
       
-      <h1 className="mb-4 text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+      <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
         {post.title}
       </h1>
 
       {/* Meta Information */}
-      <div className="mb-8 flex items-center gap-2 text-sm text-slate-500 border-b pb-6">
+      <div className="mb-8 flex items-center gap-2 text-sm text-[var(--secondary)] border-b pb-6">
         <span>By</span>
         <a href={`/c/${post.author._id}`} className='flex gap-2 items-center'>
             <img 
             src={`${apiUrl}${post.author?.avatar}`} alt="React Concept Map" class="rounded-2xl shadow-xl"
             className='w-4 h-4 rounded-full '
              />
-            <span className="font-semibold text-slate-800">{post.author?.name}</span>
+            <span className="font-semibold text-[var(--text-primary)]">{post.author?.name}</span>
         </a>
-        <span className="text-slate-300">•</span>
+        <span className="text-[var(--text-secondary)]">•</span>
         <span>{formatRelativeTime(post.publishedAt)}</span>
       </div>
 
      
       <div
         className="prose prose-slate max-w-none 
-          prose-headings:text-slate-900 
+          prose-headings:text-[var(--text-primary)] 
           prose-blockquote:border-l-indigo-500 
           prose-img:rounded-2xl 
           prose-code:before:content-none 

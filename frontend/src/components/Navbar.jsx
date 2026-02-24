@@ -146,7 +146,7 @@ useEffect(() => {
 
 
   return (<>
-  <header className="sticky top-0 z-40 h-16 w-full bg-[var(--bg-surface)]/80 backdrop-blur-md px-6 md:px-10 flex justify-between items-center">
+  <header className="sticky top-0 z-40 h-16 w-full bg-[var(--bg-surface)] backdrop-blur-md px-6 md:px-10 flex justify-between items-center">
       
       
       <Link to="/" className="font-bold text-xl text-blue-600 cursor-pointer">
