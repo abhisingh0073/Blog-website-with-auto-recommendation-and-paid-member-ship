@@ -7,11 +7,12 @@ import {
   faThumbsUp,
   faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import SidebarFollowing from "./SideBarFollowing";
+import { followingApi } from "../api/userApi";
 
 
 export default function Sidebar() {
@@ -24,10 +25,29 @@ export default function Sidebar() {
     { label: "History", icon: faClock, to: "/history" },
     { label: "Liked Posts", icon: faThumbsUp, to: "/liked" },
     { label: "My Posts", icon: faFileLines, to: "/my-posts" },
-    { label: "Following", icon: faUser, to:"/following" },
+    // { label: "Following", icon: faUser, to:"/following" },
   ];
 
+ 
   const [activeTab, setActiveTab] = useState("Home");
+  const [followingCreator, setFollowingCreator] = useState([]);
+
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      try{
+        const res = await followingApi();
+        setFollowingCreator(res.data.creators);
+
+        // console.log(res.data.creators);
+
+      } catch(err){
+        console.error(err.response.data);
+       }
+
+    } 
+
+    fetchFollowing();
+  }, [])
 
   return (
     <aside className="w-60 h-full py-4 px-2 bg-[var(--bg-surface)]">
@@ -40,8 +60,9 @@ export default function Sidebar() {
            to={tab.to}
           />
         ))}
-
       </nav>
+
+      <SidebarFollowing creator={followingCreator}/>
     </aside>
   );
 }

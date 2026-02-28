@@ -173,4 +173,24 @@ async function fetchUserPost(req, res){
 }
 
 
-export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile , fetchUserPost};
+async function followingData(req, res){
+
+    const user = req.user;
+
+    if(!user){
+        return res.status(404).json({message: "User does not exist"});
+    }
+
+    const followingData = await FollowModel.find({
+        follower: user._id,
+    })
+    .select("following")
+    .populate("following", "name avatar");
+
+    const creators = followingData.map(item => item.following);
+
+    return res.status(200).json({creators});
+}
+
+
+export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile , fetchUserPost, followingData};

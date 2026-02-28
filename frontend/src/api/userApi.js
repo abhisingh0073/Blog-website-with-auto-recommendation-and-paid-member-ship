@@ -79,4 +79,9 @@ export const subscribeCreator = (creatorId, month) => {
   });
 };
 
+
+export const followingApi = async () => {
+  return await api.get("/user/followingId", {withCredentials: true});
+}
+
   
