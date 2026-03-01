@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function SidebarFollowing({creator = []}){
-  console.log(creator);
-
+  
    const apiUrl = "http://localhost:3456";
    const navigate = useNavigate();
    const [showAll, setShowAll] = useState(false);
@@ -29,15 +28,15 @@ export default function SidebarFollowing({creator = []}){
               {visibleCreator.map((user) => (
                 <div
                 key={user._id}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:[var(--hover-bg)] cursor-pointer hover:bg-[var(--hover-bg)]"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:[var(--hover-bg)] cursor-pointer hover:bg-[var(--hover-bg)] min-w-0"
                 onClick={() => navigate(`/c/${user._id}`)}
                 >
                     <img src={`${apiUrl}${user.avatar}`} alt={user.name}
                     className="w-9 h-9 rounded-full object-cover "
                     />
                     <span 
-                    className="flex-1 text-sm font-medium text-[var(--text-secondary)] truncate min-w-0">
-                        {user.name}jhgjhjghjggggggggggggggggggggggg
+                    className="block flex-1 min-w-0 truncate text-sm font-medium text-[var(--text-secondary)]">
+                        {user.name}
                     </span>
 
                 </div>

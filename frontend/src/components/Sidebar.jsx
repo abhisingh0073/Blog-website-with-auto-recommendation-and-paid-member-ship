@@ -21,9 +21,9 @@ export default function Sidebar() {
 
   const tabs = [
     { label: "Home", icon: faHouse, to:"/" },
-    { label: "Saved", icon: faBookmark, to:"/saved" },
+    { label: "Saved", icon: faBookmark, to:"/saved-Post" },
     { label: "History", icon: faClock, to: "/history" },
-    { label: "Liked Posts", icon: faThumbsUp, to: "/liked" },
+    { label: "Liked Posts", icon: faThumbsUp, to: "/liked-posts" },
     { label: "My Posts", icon: faFileLines, to: "/my-posts" },
     // { label: "Following", icon: faUser, to:"/following" },
   ];

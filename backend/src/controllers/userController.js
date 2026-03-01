@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import{ matchPasswordAndGenerateToken, createTokenForUser} from "../services/authantication.js";
 import PostModel from "../models/PostModel.js";
 import FollowModel from "../models/FollowModel.js";
+import PostReactionModel from "../models/PostReactionModel.js";
 
 async function handleSignUp(req, res) {
     try{
@@ -193,4 +194,41 @@ async function followingData(req, res){
 }
 
 
-export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile , fetchUserPost, followingData};
+
+async function likedPosts(req, res){
+    try{
+         const user = req.user;
+
+         if(!user) return res.status(400).json({message: "You are not Login"});
+
+    const fetchLikedPosts = await PostReactionModel.find({
+        user: user._id,
+    }).populate({
+        path: "post",
+        select: "title coverImage views author publishedAt",
+        populate: {
+            path: "author",
+            select: "avatar name"
+        }
+    });
+
+    const posts = fetchLikedPosts.map((item) => ({
+        _id: item.post._id,
+        coverImage: item.post.coverImage,
+        title: item.post.title,
+        views: item.post.views,
+        author: item.post.author,
+        publishedAt: item.post.publishedAt,
+    }));
+
+    return res.status(200).json({posts});
+
+    } catch(err){
+        return res.status(500).json({message: "Something went wrong"});
+    }
+
+
+}
+
+
+export default { handleSignUp, handleLogin, handleLogOut, userProfile, updateProfile , fetchUserPost, followingData, likedPosts};

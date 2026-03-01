@@ -200,13 +200,6 @@ export async function deletePost(req, res){
       const fullpath = path.join(process.cwd(), post.coverImage);
       console.log(fullpath);
 
-    //   fs.unlink(`backend\src\public\uploads\698306ec6132fead2d14398a\1771160019441-747661698.jpg`, (err) => {
-    //     console.error(err.message);
-    //   })
-
-    //   await Post.findByIdAndDelete(postId);
-
-
       post.isDeleted = true;
       await post.save();
       
@@ -390,4 +383,6 @@ export async function fetchPostToUpdate(req, res){
 
    
 }
+
+
 

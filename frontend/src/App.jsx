@@ -10,6 +10,9 @@ import { useAuth } from "./context/AuthContext";
 import UserProfile from "./pages/UserProfile";
 import CreatorProfile from "./pages/CreatorProfile";
 import SearchPage from "./pages/SearchPage";
+import SavedPost from "./pages/SavedPostPage";
+import MyPosts from "./pages/MyPostsPage";
+import LikedPost from "./pages/LikedPostPage";
 
 function App() {
 
@@ -46,6 +49,9 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/c/:creatorId" element={<CreatorProfile/>}/>
         <Route path="/search" element={<SearchPage/>}/>
+        <Route path="/saved-Post" element={<SavedPost/>}/>
+        <Route path="/my-posts" element={<MyPosts/>}/>
+        <Route path="/liked-posts" element={<LikedPost/>}/>
       </Route>
     </Routes>
   );
